@@ -22,7 +22,7 @@ class Image extends Base {
         $dir = $f3->get('IMAGE_DIR');
         if(!is_dir($dir)) mkdir($dir, 0777, true);
 
-        $hashName = date('Y-m-d-H-i-s_').hash('md5', time());
+        $hashName = hash('md5', time());
         $fileName = $hashName.strrchr($_FILES['file']['name'], '.');
         $thumbName = $hashName.'_thumb'.strrchr($_FILES['file']['name'], '.');
         file_put_contents($dir.$fileName, file_get_contents($_FILES['file']['tmp_name']));
