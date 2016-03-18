@@ -6,7 +6,7 @@
  * Time: 下午3:40
  */
 
-namespace controller\rest;
+namespace controller\api;
 
 class Base extends \controller\Base {
 } 

@@ -6,7 +6,7 @@
  * Time: 10:32
  */
 
-namespace controller\rest;
+namespace controller\api;
 
 use utils\ImageHandler;
 
