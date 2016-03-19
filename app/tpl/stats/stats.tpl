@@ -11,7 +11,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 .label, .table-hover {cursor: pointer}
 .label-highlight {background-color: #dedede}
 .label-brand {color: #000}
-.stats-range {margin-top: 15px; display: none}
+.stats-range {margin-bottom: 20px; display: none}
 .stats-switch {float: right; cursor: pointer}
 </style>
 </head>
@@ -19,18 +19,18 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 {{include file='stats/common/top-nav.tpl'}}
 <div class='container' style='margin: 70px auto'>
     {{include file='stats/common/tab-nav.tpl'}}
+    <div class='row' style='margin-top: 15px'>
+        <div class='alert alert-success'>
+            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$stats[$i-1]['quantity']}}，同比：{{$stats[$i-1]['quantityRatio']}} | 销售额：{{$stats[$i-1]['amount']}}，同比：{{$stats[$i-1]['amountRatio']}}
+            <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
+        </div>
+    </div>
     <div class='row stats-range'>
         {{foreach $stats as $item}}
             <span class='label label-brand' data='{{$item["i"]}}'>
                 【<strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong> 销量：{{$item['quantity']}} | {{$item['quantityRatio']}}，销售额：{{$item['amount']}} | {{$item['amountRatio']}}】
             </span>
         {{/foreach}}
-    </div>
-    <div class='row' style='margin-top: 15px'>
-        <div class='alert alert-success'>
-            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$item['quantity']}}，同比：{{$item['quantityRatio']}} | 销售额：{{$item['amount']}}，同比：{{$item['amountRatio']}}
-            <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
-        </div>
     </div>
     <div class='row'>
         <div class='col-md-4'>
