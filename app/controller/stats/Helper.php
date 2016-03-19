@@ -9,7 +9,7 @@
 namespace controller\stats;
 
 class Helper {
-    function statsWeekOrMonth($y, $i, $t, $target) {
+    function statsWeekOrMonth($y, $i, $t, $target='week') {
         $pdo = new \db\Base();
         $tables = array(
             'order_item' => 'o',
@@ -21,21 +21,21 @@ class Helper {
 
         $year = $y;
 
-        if($target == 'week') {
+        if($target == 'quarter') {
             list($prev) = $pdo->_fetchArray(
                 $tables,
                 'sum(o.price) as amount, count(*) as quantity',
-                array(array('o.prototype_id=p.id and '.$manufactory.' and year(o.create_time)=? and weekofyear(o.create_time)=?', date('Y', strtotime("$year -1 year")), date('W', strtotime(date('Y-12-31', strtotime("$year -1 year")))))),
+                array(array('o.prototype_id=p.id and '.$manufactory.' and year(o.create_time)=? and quarter(o.create_time)=4', date('Y', strtotime("$year -1 year")))),
                 null, 0, 0, 0
             );
-            $statsFields = 'sum(o.price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
-            $time = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.$i;
+            $statsFields = 'sum(o.price) as amount, count(*) as quantity, quarter(o.create_time) as i';
+            $time = 'year(o.create_time)='.$year.' and quarter(o.create_time)='.$i;
             $meta = array(
-                'full' => 'Week',
-                'short' =>  'W',
-                'chinese' => '周'
+                'full' => 'Quarter',
+                'short' =>  'Q',
+                'chinese' => '季度'
             );
-        } else {
+        } else if($target == 'month') {
             list($prev) = $pdo->_fetchArray(
                 $tables,
                 'sum(o.price) as amount, count(*) as quantity',
@@ -48,6 +48,20 @@ class Helper {
                 'full' => 'Month',
                 'short' =>  'M',
                 'chinese' => '月'
+            );
+        } else {
+            list($prev) = $pdo->_fetchArray(
+                $tables,
+                'sum(o.price) as amount, count(*) as quantity',
+                array(array('o.prototype_id=p.id and '.$manufactory.' and year(o.create_time)=? and weekofyear(o.create_time)=?', date('Y', strtotime("$year -1 year")), date('W', strtotime(date('Y-12-31', strtotime("$year -1 year")))))),
+                null, 0, 0, 0
+            );
+            $statsFields = 'sum(o.price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
+            $time = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.$i;
+            $meta = array(
+                'full' => 'Week',
+                'short' =>  'W',
+                'chinese' => '周'
             );
         }
 
@@ -106,6 +120,6 @@ class Helper {
         $smarty->assign('channelStats', $channelStats);
         $smarty->assign('sizeStats', $sizeStats);
         $smarty->assign('modelStats', $modelStats);
-        $smarty->display('stats/week_month.tpl');
+        $smarty->display('stats/stats.tpl');
     }
 }

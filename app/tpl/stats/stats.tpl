@@ -11,22 +11,25 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 .label, .table-hover {cursor: pointer}
 .label-highlight {background-color: #dedede}
 .label-brand {color: #000}
+.stats-range {margin-top: 15px; display: none}
+.stats-switch {float: right; cursor: pointer}
 </style>
 </head>
 <body>
 {{include file='stats/common/top-nav.tpl'}}
 <div class='container' style='margin: 70px auto'>
     {{include file='stats/common/tab-nav.tpl'}}
-    <div class='row'>
+    <div class='row stats-range'>
         {{foreach $stats as $item}}
             <span class='label label-brand' data='{{$item["i"]}}'>
                 【<strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong> 销量：{{$item['quantity']}} | {{$item['quantityRatio']}}，销售额：{{$item['amount']}} | {{$item['amountRatio']}}】
             </span>
         {{/foreach}}
     </div>
-    <div class='row'>
+    <div class='row' style='margin-top: 15px'>
         <div class='alert alert-success'>
-            {{$year}}年第{{$i}}{{$meta['chinese']}}
+            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$item['quantity']}}，同比：{{$item['quantityRatio']}} | 销售额：{{$item['amount']}}，同比：{{$item['amountRatio']}}
+            <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
         </div>
     </div>
     <div class='row'>
@@ -84,6 +87,11 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             var model = $(this).attr('data');
             console.log('click:'+ model);
             window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
+        })
+        $('.stats-switch').click(function() {
+            var range = $('.stats-range');
+            if(range.css('display') == 'none') range.show();
+            else range.hide();
         })
     });
 </script>

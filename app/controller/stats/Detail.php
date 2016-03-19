@@ -20,13 +20,15 @@ class Detail extends Base {
             'order_item' => 'o',
             'prototype' => 'p',
         );
-        if($d == 'Month') {
+        if($d == 'Quarter') {
+            $time = 'year(o.create_time)='.$y.' and quarter(o.create_time)='.$i;
+            $description = $y.'年'.$i.'季度';
+        } else if($d == 'Month') {
             $time = 'year(o.create_time)='.$y.' and month(o.create_time)='.$i;
             $description = $y.'年'.$i.'月';
-        }
-        else {
+        } else {
             $time = 'year(o.create_time)='.$y.' and weekofyear(o.create_time)='.$i;
-            $description = $y.'年第'.$i.'周';
+            $description = $y.'年'.$i.'周';
         }
 
         $channelStats = $pdo->_fetchArray(

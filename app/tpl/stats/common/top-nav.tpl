@@ -7,7 +7,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{$context}}/stats/Week">WEEK</a></li>
                 <li><a href="{{$context}}/stats/Month">MONTH</a></li>
-                <li><a href="{{$context}}/stats/Season">SEASON</a></li>
+                <li><a href="{{$context}}/stats/Quarter">Quarter</a></li>
             </ul>
         </div>
     </div>
