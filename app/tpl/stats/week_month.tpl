@@ -10,7 +10,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 .label {font-weight: 500}
 .label, .table-hover {cursor: pointer}
 .label-highlight {background-color: #dedede}
-.label-brand {font-weight: 700; color: #000}
+.label-brand {color: #000}
 </style>
 </head>
 <body>
@@ -18,15 +18,15 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 <div class='container' style='margin: 70px auto'>
     {{include file='stats/common/tab-nav.tpl'}}
     <div class='row'>
-        {{foreach $weekStats as $item}}
-            <span class='label label-brand' data='{{$item["week"]}}'>
-                &nbsp;<strong>{{$year}}W{{$item['week']}} </strong>同比销量: {{$item['quantityRatio']}},同比销售额: {{$item['amountRatio']}}&nbsp;
+        {{foreach $stats as $item}}
+            <span class='label label-brand' data='{{$item["i"]}}'>
+                【<strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong> 销量：{{$item['quantity']}} | {{$item['quantityRatio']}}，销售额：{{$item['amount']}} | {{$item['amountRatio']}}】
             </span>
         {{/foreach}}
     </div>
     <div class='row'>
         <div class='alert alert-success'>
-            销售量:&nbsp;{{$stats['quantity']}}&nbsp;|&nbsp;销售额:&nbsp;{{$stats['amount']}}
+            {{$year}}年第{{$i}}{{$meta['chinese']}}
         </div>
     </div>
     <div class='row'>
@@ -73,12 +73,12 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
     $(function(){
         $('.label-brand').each(function() {
             var data = $(this).attr('data');
-            var w = '{{$w}}'
-            if(data == w) $(this).addClass('label-highlight');
+            var i = '{{$i}}'
+            if(data == i) $(this).addClass('label-highlight');
         })
         $('.label-brand').click(function() {
             var data = $(this).attr('data');
-            location.href = '{{$context}}/stats/Week?t={{$t}}&w=' + data;
+            location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&i=' + data;
         })
         $('.table-hover tr').click(function() {
             var model = $(this).attr('data');

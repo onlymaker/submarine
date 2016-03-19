@@ -1,6 +1,6 @@
 <ul class='nav nav-tabs'>
-    <li role='presentation'><a href='{{$context}}/stats/Week?t=shoe'>鞋类</a></li>
-    <li role='presentation'><a href='{{$context}}/stats/Week?t=smallware'>小商品</a></li>
+    <li role='presentation'><a href='{{$context}}/stats/{{$meta['full']}}?t=shoe'>鞋类</a></li>
+    <li role='presentation'><a href='{{$context}}/stats/{{$meta['full']}}?t=smallware'>小商品</a></li>
 </ul>
 <script>
     $(function() {
