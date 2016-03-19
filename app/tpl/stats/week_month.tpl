@@ -50,7 +50,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             </div>
             <table class='table table-bordered table-hover'>
                 {{foreach $modelStats as $item}}
-                    <tr data='{{$item["model"]}}'><td>{{$item['model']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -80,9 +80,10 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             var data = $(this).attr('data');
             location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&y={{$year}}&i=' + data;
         })
-        $('.table-hover tr').click(function() {
+        $('.model').click(function() {
             var model = $(this).attr('data');
-            location.href = '{{$context}}/stats/Detail?t={{$t}}&model=' + model;
+            console.log('click:'+ model);
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
         })
     });
 </script>
