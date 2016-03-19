@@ -12,7 +12,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 <body>
 <div class='container' style='margin: 70px auto'>
     <div class="page-header">
-        <h1>{{$model}} <small>{{$description}}</small></h1>
+        <h1>{{$model|upper}} <small>{{$description}}</small></h1>
     </div>
     <div class='row'>
         <div class='col-md-6'>

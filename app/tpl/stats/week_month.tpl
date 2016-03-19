@@ -38,7 +38,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             </div>
             <table class='table table-bordered'>
                 {{foreach $channelStats as $item}}
-                    <tr><td>{{$item['channel']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -50,7 +50,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             </div>
             <table class='table table-bordered table-hover'>
                 {{foreach $modelStats as $item}}
-                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
