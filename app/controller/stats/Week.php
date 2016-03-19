@@ -10,9 +10,10 @@ namespace controller\stats;
 
 class Week extends Base {
     function get() {
-        $i = isset($_GET['i']) ? $_GET['i'] : 1;
-        $t = isset($_GET['t']) ? $_GET['t'] : 'shoe';
+        $y = isset($_GET['y']) ? (int)$_GET['y'] : date('Y');
+        $i = isset($_GET['i']) ? (int)$_GET['i'] : 1;
+        $t = isset($_GET['t']) ? (int)$_GET['t'] : 'shoe';
         $helper = new Helper();
-        $helper->statsWeekOrMonth($i, $t, 'week');
+        $helper->statsWeekOrMonth($y, $i, $t, 'week');
     }
 } 

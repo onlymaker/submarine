@@ -78,7 +78,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
         })
         $('.label-brand').click(function() {
             var data = $(this).attr('data');
-            location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&i=' + data;
+            location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&y={{$year}}&i=' + data;
         })
         $('.table-hover tr').click(function() {
             var model = $(this).attr('data');

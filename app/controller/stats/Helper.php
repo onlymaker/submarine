@@ -9,29 +9,41 @@
 namespace controller\stats;
 
 class Helper {
-    function statsWeekOrMonth($i, $t, $target) {
+    function statsWeekOrMonth($y, $i, $t, $target) {
         $pdo = new \db\Base();
         $tables = array(
             'order_item' => 'o',
             'prototype' => 'p',
         );
 
-        $year = date('Y');
-
         if($t == 'shoe') $manufactory = 'p.manufactory!=\'小商品\'';
         else $manufactory = 'p.manufactory=\'小商品\'';
 
+        $year = $y;
+
         if($target == 'week') {
+            list($prev) = $pdo->_fetchArray(
+                $tables,
+                'sum(o.price) as amount, count(*) as quantity',
+                array(array('o.prototype_id=p.id and '.$manufactory.' and year(o.create_time)=? and weekofyear(o.create_time)=?', date('Y', strtotime("$year -1 year")), date('W', strtotime(date('Y-12-31', strtotime("$year -1 year")))))),
+                null, 0, 0, 0
+            );
             $statsFields = 'sum(o.price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
-            $time = 'weekofyear(o.create_time)='.$i;
+            $time = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.$i;
             $meta = array(
                 'full' => 'Week',
                 'short' =>  'W',
                 'chinese' => '周'
             );
         } else {
+            list($prev) = $pdo->_fetchArray(
+                $tables,
+                'sum(o.price) as amount, count(*) as quantity',
+                array(array('o.prototype_id=p.id and '.$manufactory.' and year(o.create_time)=? and month(o.create_time)=12', date('Y', strtotime("$year -1 year")))),
+                null, 0, 0, 0
+            );
             $statsFields = 'sum(o.price) as amount, count(*) as quantity, month(o.create_time) as i';
-            $time = 'month(o.create_time)='.$i;
+            $time = 'year(o.create_time)='.$year.' and month(o.create_time)='.$i;
             $meta = array(
                 'full' => 'Month',
                 'short' =>  'M',
@@ -47,15 +59,16 @@ class Helper {
             0, 0, 0
         );
         foreach($stats as $idx=>&$item) {
-            if($idx == 0 || $stats[$idx-1]['amount'] == 0) {
-                $item['amountRatio'] = 'undefined';
+            if($idx == 0) {
+                if($prev['amount'] == 0) $item['amountRatio'] = 'undefined';
+                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prev['amount']) / $prev['amount']);
+                if($prev['quantity'] == 0) $item['quantityRatio'] = 'undefined';
+                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prev['quantity']) / $prev['quantity']);
             } else {
-                $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $stats[$idx-1]['amount'])/$stats[$idx-1]['amount']);
-            }
-            if($idx == 0 || $stats[$idx-1]['quantity'] == 0) {
-                $item['quantityRatio'] = 'undefined';
-            } else {
-                $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $stats[$idx-1]['quantity'])/$stats[$idx-1]['quantity']);
+                if($stats[$idx-1]['amount'] == 0) $item['amountRatio'] = 'undefined';
+                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $stats[$idx-1]['amount'])/$stats[$idx-1]['amount']);
+                if($stats[$idx-1]['quantity'] == 0) $item['quantityRatio'] = 'undefined';
+                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $stats[$idx-1]['quantity'])/$stats[$idx-1]['quantity']);
             }
         }
 
