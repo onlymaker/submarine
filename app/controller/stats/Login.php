@@ -20,7 +20,7 @@ class Login extends Base {
         $check = false;
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $authorizedKeys = explode(',', $f3->get('AUTHORIZED_KEYS'));
+        $authorizedKeys = $f3->get('AUTHORIZED_KEYS');
         if(in_array(md5($username.$password), $authorizedKeys)) {
             setcookie('USERNAME', $username);
             $check = true;

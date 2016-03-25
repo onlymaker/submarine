@@ -7,12 +7,13 @@
 <script src='http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <style>
 body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeiti, Helmet, Freesans, 'Helvetica Neue', Helvetica, Arial, sans-serif;}
+.alert{cursor: pointer}
 .label {font-weight: 500}
 .label, .table-hover {cursor: pointer}
 .label-highlight {background-color: #dedede}
 .label-brand {color: #000}
 .stats-range {margin-bottom: 20px; display: none}
-.stats-switch {float: right; cursor: pointer}
+.stats-switch {float: right}
 </style>
 </head>
 <body>
@@ -88,7 +89,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             console.log('click:'+ model);
             window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
         })
-        $('.stats-switch').click(function() {
+        $('.alert').click(function() {
             var range = $('.stats-range');
             if(range.css('display') == 'none') range.show();
             else range.hide();
