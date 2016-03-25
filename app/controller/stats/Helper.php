@@ -75,14 +75,14 @@ class Helper {
         foreach($stats as $idx=>&$item) {
             if($idx == 0) {
                 if($prev['amount'] == 0) $item['amountRatio'] = 'undefined';
-                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prev['amount']) / $prev['amount']);
+                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prev['amount']) / $prev['amount'] * 100);
                 if($prev['quantity'] == 0) $item['quantityRatio'] = 'undefined';
-                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prev['quantity']) / $prev['quantity']);
+                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prev['quantity']) / $prev['quantity'] * 100);
             } else {
                 if($stats[$idx-1]['amount'] == 0) $item['amountRatio'] = 'undefined';
-                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $stats[$idx-1]['amount'])/$stats[$idx-1]['amount']);
+                else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $stats[$idx-1]['amount']) / $stats[$idx-1]['amount'] * 100);
                 if($stats[$idx-1]['quantity'] == 0) $item['quantityRatio'] = 'undefined';
-                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $stats[$idx-1]['quantity'])/$stats[$idx-1]['quantity']);
+                else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $stats[$idx-1]['quantity']) / $stats[$idx-1]['quantity'] * 100);
             }
         }
 
