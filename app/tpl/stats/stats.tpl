@@ -8,8 +8,10 @@
 <style>
 body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeiti, Helmet, Freesans, 'Helvetica Neue', Helvetica, Arial, sans-serif;}
 .stats-highlight {background-color: #dff0d8}
-.stats-highlight, .stats-list-item{cursor: pointer}
+.stats-highlight, .stats-list-item, .model{cursor: pointer}
 .stats-list {margin: 15px; display: none}
+.panel-title {display: inline-block}
+.panel-title+span {float: right; cursor: pointer}
 </style>
 </head>
 <body>
@@ -41,6 +43,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>渠道</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='channel'></span>
                 </div>
             </div>
             <table class='table table-bordered table-condensed'>
@@ -53,9 +56,10 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>产品型号</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='model'></span>
                 </div>
             </div>
-            <table class='table table-bordered table-condensed table-hover'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $modelStats as $item}}
                     <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
@@ -65,6 +69,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>尺码</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='size'></span>
                 </div>
             </div>
             <table class='table table-bordered table-condensed'>
@@ -78,6 +83,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 </body>
 <script>
     $(function(){
+        registerModelClick();
         $('.stats-list-item').each(function() {
             var data = $(this).attr('data');
             var i = '{{$i}}'
@@ -87,16 +93,63 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             var data = $(this).attr('data');
             location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&y={{$year}}&i=' + data;
         })
-        $('.model').click(function() {
-            var model = $(this).attr('data');
-            console.log('click:'+ model);
-            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
-        })
         $('.stats-highlight').click(function() {
             var statsList = $('.stats-list');
             statsList.show();
             statsList.prev().hide();
         })
+        $('.sort').click(function() {
+            var sortIdx = nextSortIdx($(this).attr('data'));
+            var items = $(this).parent().parent().next().find('tr');
+            var sortArray = [];
+            var dataArray = [];
+            for(var i = 0; i < items.length; i++) {
+                var text = items.eq(i).children().eq(sortIdx).text();
+                var data = parseFloat(text);
+                sortArray.push(i);
+                dataArray.push(data);
+            }
+            for(var i = 0; i < sortArray.length; i++) {
+                for(j = i; j < sortArray.length; j++) {
+                    if(dataArray[sortArray[i]] < dataArray[sortArray[j]]) {
+                        sortArray[i] += sortArray[j];
+                        sortArray[j] = sortArray[i] - sortArray[j];
+                        sortArray[i] = sortArray[i] - sortArray[j];
+                    }
+                }
+            }
+            var sortHtml = '';
+            sortArray.forEach(function(i) {
+                var html = items.eq(i).prop('outerHTML')
+                sortHtml += html
+            })
+            var table = items.parent();
+            items.remove();
+            table.append(sortHtml);
+            $(this).parent().parent().next().find('tr').each(function() {
+                $(this).children().each(function($i) {
+                    if($i == sortIdx) $(this).css('background-color', '#f5f5f5');
+                    else $(this).css('background-color', '#ffffff')
+                });
+            })
+            registerModelClick();
+        })
     });
+    function registerModelClick() {
+        $('.model').click(function() {
+            var model = $(this).attr('data');
+            console.log('click:'+ model);
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
+        })
+    }
+    var sortIdxArray = {
+        channel: 1,
+        model: 1,
+        size: 1
+    }
+    function nextSortIdx(name) {
+        (sortIdxArray[name] == 4) ? sortIdxArray[name] = 1 : ++sortIdxArray[name];
+        return sortIdxArray[name];
+    }
 </script>
 </html>
