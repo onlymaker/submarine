@@ -20,8 +20,8 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
         <table class='table'>
             <tr class='stats-highlight'>
                 <td><strong>{{$year}}{{$meta['short']}}{{$i}}</strong></td>
-                <td>销量</td><td>{{$stats[$i-1]['quantity']}}</td><td>环比</td><td>{{$stats[$i-1]['quantityRatio']}}</td>
-                <td>销售额</td><td>{{$stats[$i-1]['amount']}}</td><td>环比</td><td>{{$stats[$i-1]['amountRatio']}}</td>
+                <td>销量</td><td>{{$stats[$i-1]['quantity']}}</td><td>{{$stats[$i-1]['quantityRatio']}}</td>
+                <td>销售额</td><td>{{$stats[$i-1]['amount']}}</td><td>{{$stats[$i-1]['amountRatio']}}</td>
             </tr>
         </table>
     </div>
@@ -30,8 +30,8 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             {{foreach $stats as $item}}
                 <tr class='stats-list-item' data='{{$item["i"]}}'>
                     <td><strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong></td>
-                    <td>销量</td><td>{{$item['quantity']}}</td><td>环比</td><td>{{$item['quantityRatio']}}</td>
-                    <td>销售额</td><td>{{$item['amount']}}</td><td>环比</td><td>{{$item['amountRatio']}}</td>
+                    <td>销量</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td>
+                    <td>销售额</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td>
                 </tr>
             {{/foreach}}
         </table>
@@ -43,9 +43,9 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                     <h3 class='panel-title'>渠道</h3>
                 </div>
             </div>
-            <table class='table table-bordered'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $channelStats as $item}}
-                    <tr><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -55,9 +55,9 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                     <h3 class='panel-title'>产品型号</h3>
                 </div>
             </div>
-            <table class='table table-bordered table-hover'>
+            <table class='table table-bordered table-condensed table-hover'>
                 {{foreach $modelStats as $item}}
-                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -67,9 +67,9 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                     <h3 class='panel-title'>尺码</h3>
                 </div>
             </div>
-            <table class='table table-bordered'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $sizeStats as $item}}
-                    <tr><td>{{$item['size']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr><td>{{$item['size']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
