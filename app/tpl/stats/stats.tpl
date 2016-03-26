@@ -8,7 +8,7 @@
 <style>
 body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeiti, Helmet, Freesans, 'Helvetica Neue', Helvetica, Arial, sans-serif;}
 .stats-highlight {background-color: #dff0d8}
-.stats-highlight, .stats-list-item, .model{cursor: pointer}
+.stats-highlight, .stats-list-item, .channel, .model, .size{cursor: pointer}
 .stats-list {margin: 15px; display: none}
 .panel-title {display: inline-block}
 .panel-title+span {float: right; cursor: pointer}
@@ -48,7 +48,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             </div>
             <table class='table table-bordered table-condensed'>
                 {{foreach $channelStats as $item}}
-                    <tr><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
+                    <tr class='channel' data='{{$item["channel"]}}'><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -74,7 +74,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             </div>
             <table class='table table-bordered table-condensed'>
                 {{foreach $sizeStats as $item}}
-                    <tr><td>{{$item['size']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
+                    <tr class='size' data='{{$item["size"]}}'><td>{{$item['size']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -84,6 +84,8 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 <script>
     $(function(){
         registerModelClick();
+        registerChannelClick();
+        registerSizeClick();
         $('.stats-list-item').each(function() {
             var data = $(this).attr('data');
             var i = '{{$i}}'
@@ -99,7 +101,8 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             statsList.prev().hide();
         })
         $('.sort').click(function() {
-            var sortIdx = nextSortIdx($(this).attr('data'));
+            var type = $(this).attr('data');
+            var sortIdx = nextSortIdx(type);
             var items = $(this).parent().parent().next().find('tr');
             var sortArray = [];
             var dataArray = [];
@@ -132,14 +135,27 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                     else $(this).css('background-color', '#ffffff')
                 });
             })
-            registerModelClick();
+            type == 'model' && registerModelClick();
+            type == 'channel' && registerChannelClick();
+            type == 'size' && registerSizeClick();
         })
     });
     function registerModelClick() {
         $('.model').click(function() {
             var model = $(this).attr('data');
-            console.log('click:'+ model);
             window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
+        })
+    }
+    function registerChannelClick() {
+        $('.channel').click(function() {
+            var channel = $(this).attr('data');
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&channel=' + channel);
+        })
+    }
+    function registerSizeClick() {
+        $('.size').click(function() {
+            var size = $(this).attr('data');
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&size=' + size);
         })
     }
     var sortIdxArray = {
