@@ -7,13 +7,9 @@
 <script src='http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <style>
 body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeiti, Helmet, Freesans, 'Helvetica Neue', Helvetica, Arial, sans-serif;}
-.alert{cursor: pointer}
-.label {font-weight: 500}
-.label, .table-hover {cursor: pointer}
-.label-highlight {background-color: #dedede}
-.label-brand {color: #000}
-.stats-range {margin-bottom: 20px; display: none}
-.stats-switch {float: right}
+.stats-highlight {background-color: #dff0d8}
+.stats-highlight, .stats-list-item{cursor: pointer}
+.stats-list {margin: 15px; display: none}
 </style>
 </head>
 <body>
@@ -21,17 +17,24 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 <div class='container' style='margin: 70px auto'>
     {{include file='stats/common/tab-nav.tpl'}}
     <div class='row' style='margin-top: 15px'>
-        <div class='alert alert-success'>
-            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$stats[$i-1]['quantity']}}，环比：{{$stats[$i-1]['quantityRatio']}} | 销售额：{{$stats[$i-1]['amount']}}，环比：{{$stats[$i-1]['amountRatio']}}
-            <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
-        </div>
+        <table class='table'>
+            <tr class='stats-highlight'>
+                <td><strong>{{$year}}{{$meta['short']}}{{$i}}</strong></td>
+                <td>销量</td><td>{{$stats[$i-1]['quantity']}}</td><td>环比</td><td>{{$stats[$i-1]['quantityRatio']}}</td>
+                <td>销售额</td><td>{{$stats[$i-1]['amount']}}</td><td>环比</td><td>{{$stats[$i-1]['amountRatio']}}</td>
+            </tr>
+        </table>
     </div>
-    <div class='row stats-range'>
-        {{foreach $stats as $item}}
-            <span class='label label-brand' data='{{$item["i"]}}'>
-                【<strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong> 销量：{{$item['quantity']}} | {{$item['quantityRatio']}}，销售额：{{$item['amount']}} | {{$item['amountRatio']}}】
-            </span>
-        {{/foreach}}
+    <div class='row stats-list'>
+        <table class='table table-hover table-bordered'>
+            {{foreach $stats as $item}}
+                <tr class='stats-list-item' data='{{$item["i"]}}'>
+                    <td><strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong></td>
+                    <td>销量</td><td>{{$item['quantity']}}</td><td>环比</td><td>{{$item['quantityRatio']}}</td>
+                    <td>销售额</td><td>{{$item['amount']}}</td><td>环比</td><td>{{$item['amountRatio']}}</td>
+                </tr>
+            {{/foreach}}
+        </table>
     </div>
     <div class='row'>
         <div class='col-md-4'>
@@ -75,12 +78,12 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 </body>
 <script>
     $(function(){
-        $('.label-brand').each(function() {
+        $('.stats-list-item').each(function() {
             var data = $(this).attr('data');
             var i = '{{$i}}'
-            if(data == i) $(this).addClass('label-highlight');
+            if(data == i) $(this).css('background-color', '#dff0d8');
         })
-        $('.label-brand').click(function() {
+        $('.stats-list-item').click(function() {
             var data = $(this).attr('data');
             location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&y={{$year}}&i=' + data;
         })
@@ -89,10 +92,10 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             console.log('click:'+ model);
             window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
         })
-        $('.alert').click(function() {
-            var range = $('.stats-range');
-            if(range.css('display') == 'none') range.show();
-            else range.hide();
+        $('.stats-highlight').click(function() {
+            var statsList = $('.stats-list');
+            statsList.show();
+            statsList.prev().hide();
         })
     });
 </script>

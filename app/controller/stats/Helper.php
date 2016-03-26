@@ -32,8 +32,7 @@ class Helper {
             $time = 'year(o.create_time)='.$year.' and quarter(o.create_time)='.$i;
             $meta = array(
                 'full' => 'Quarter',
-                'short' =>  'Q',
-                'chinese' => '季度'
+                'short' =>  'Q'
             );
         } else if($target == 'month') {
             list($prev) = $pdo->_fetchArray(
@@ -46,8 +45,7 @@ class Helper {
             $time = 'year(o.create_time)='.$year.' and month(o.create_time)='.$i;
             $meta = array(
                 'full' => 'Month',
-                'short' =>  'M',
-                'chinese' => '月'
+                'short' =>  'M'
             );
         } else {
             list($prev) = $pdo->_fetchArray(
@@ -60,8 +58,7 @@ class Helper {
             $time = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.$i;
             $meta = array(
                 'full' => 'Week',
-                'short' =>  'W',
-                'chinese' => '周'
+                'short' =>  'W'
             );
         }
 
