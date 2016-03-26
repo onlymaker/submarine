@@ -22,7 +22,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
     {{include file='stats/common/tab-nav.tpl'}}
     <div class='row' style='margin-top: 15px'>
         <div class='alert alert-success'>
-            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$stats[$i-1]['quantity']}}，同比：{{$stats[$i-1]['quantityRatio']}} | 销售额：{{$stats[$i-1]['amount']}}，同比：{{$stats[$i-1]['amountRatio']}}
+            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$stats[$i-1]['quantity']}}，环比：{{$stats[$i-1]['quantityRatio']}} | 销售额：{{$stats[$i-1]['amount']}}，环比：{{$stats[$i-1]['amountRatio']}}
             <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
         </div>
     </div>
