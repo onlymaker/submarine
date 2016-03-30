@@ -7,13 +7,11 @@
 <script src='http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <style>
 body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeiti, Helmet, Freesans, 'Helvetica Neue', Helvetica, Arial, sans-serif;}
-.alert{cursor: pointer}
-.label {font-weight: 500}
-.label, .table-hover {cursor: pointer}
-.label-highlight {background-color: #dedede}
-.label-brand {color: #000}
-.stats-range {margin-bottom: 20px; display: none}
-.stats-switch {float: right}
+.stats-highlight {background-color: #dff0d8}
+.stats-highlight, .stats-list-item, .channel, .model, .size{cursor: pointer}
+.stats-list {margin: 15px; display: none}
+.panel-title {display: inline-block}
+.panel-title+span {float: right; cursor: pointer}
 </style>
 </head>
 <body>
@@ -21,28 +19,36 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 <div class='container' style='margin: 70px auto'>
     {{include file='stats/common/tab-nav.tpl'}}
     <div class='row' style='margin-top: 15px'>
-        <div class='alert alert-success'>
-            <strong>{{$year}} 年 {{$i}}{{$meta['chinese']}}</strong> 销量：{{$stats[$i-1]['quantity']}}，环比：{{$stats[$i-1]['quantityRatio']}} | 销售额：{{$stats[$i-1]['amount']}}，环比：{{$stats[$i-1]['amountRatio']}}
-            <span class="glyphicon glyphicon-list-alt stats-switch">&nbsp;</span>
-        </div>
+        <table class='table'>
+            <tr class='stats-highlight'>
+                <td><strong>{{$year}}{{$meta['short']}}{{$i}}</strong></td>
+                <td>销量</td><td>{{$stats[$i-1]['quantity']}}</td><td>{{$stats[$i-1]['quantityRatio']}}</td>
+                <td>销售额</td><td>{{$stats[$i-1]['amount']}}</td><td>{{$stats[$i-1]['amountRatio']}}</td>
+            </tr>
+        </table>
     </div>
-    <div class='row stats-range'>
-        {{foreach $stats as $item}}
-            <span class='label label-brand' data='{{$item["i"]}}'>
-                【<strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong> 销量：{{$item['quantity']}} | {{$item['quantityRatio']}}，销售额：{{$item['amount']}} | {{$item['amountRatio']}}】
-            </span>
-        {{/foreach}}
+    <div class='row stats-list'>
+        <table class='table table-hover table-bordered'>
+            {{foreach $stats as $item}}
+                <tr class='stats-list-item' data='{{$item["i"]}}'>
+                    <td><strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong></td>
+                    <td>销量</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td>
+                    <td>销售额</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td>
+                </tr>
+            {{/foreach}}
+        </table>
     </div>
     <div class='row'>
         <div class='col-md-4'>
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>渠道</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='channel'></span>
                 </div>
             </div>
-            <table class='table table-bordered'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $channelStats as $item}}
-                    <tr><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='channel' data='{{$item["channel"]}}'><td>{{$item['channel']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -50,11 +56,12 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>产品型号</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='model'></span>
                 </div>
             </div>
-            <table class='table table-bordered table-hover'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $modelStats as $item}}
-                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='model' data='{{$item["model"]}}'><td>{{$item['model']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -62,11 +69,12 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>尺码</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='size'></span>
                 </div>
             </div>
-            <table class='table table-bordered'>
+            <table class='table table-bordered table-condensed'>
                 {{foreach $sizeStats as $item}}
-                    <tr><td>{{$item['size']}}</td><td>{{$item['quantity']}}</td><td>{{$item['amount']}}</td></tr>
+                    <tr class='size' data='{{$item["size"]}}'><td>{{$item['size']|upper}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
                 {{/foreach}}
             </table>
         </div>
@@ -75,25 +83,89 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
 </body>
 <script>
     $(function(){
-        $('.label-brand').each(function() {
+        registerModelClick();
+        registerChannelClick();
+        registerSizeClick();
+        $('.stats-list-item').each(function() {
             var data = $(this).attr('data');
             var i = '{{$i}}'
-            if(data == i) $(this).addClass('label-highlight');
+            if(data == i) $(this).css('background-color', '#dff0d8');
         })
-        $('.label-brand').click(function() {
+        $('.stats-list-item').click(function() {
             var data = $(this).attr('data');
             location.href = '{{$context}}/stats/{{$meta["full"]}}?t={{$t}}&y={{$year}}&i=' + data;
         })
-        $('.model').click(function() {
-            var model = $(this).attr('data');
-            console.log('click:'+ model);
-            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
+        $('.stats-highlight').click(function() {
+            var statsList = $('.stats-list');
+            statsList.show();
+            statsList.prev().hide();
         })
-        $('.alert').click(function() {
-            var range = $('.stats-range');
-            if(range.css('display') == 'none') range.show();
-            else range.hide();
+        $('.sort').click(function() {
+            var type = $(this).attr('data');
+            var sortIdx = nextSortIdx(type);
+            var items = $(this).parent().parent().next().find('tr');
+            var sortArray = [];
+            var dataArray = [];
+            for(var i = 0; i < items.length; i++) {
+                var text = items.eq(i).children().eq(sortIdx).text();
+                var data = parseFloat(text);
+                sortArray.push(i);
+                dataArray.push(data);
+            }
+            for(var i = 0; i < sortArray.length; i++) {
+                for(j = i; j < sortArray.length; j++) {
+                    if(dataArray[sortArray[i]] < dataArray[sortArray[j]]) {
+                        sortArray[i] += sortArray[j];
+                        sortArray[j] = sortArray[i] - sortArray[j];
+                        sortArray[i] = sortArray[i] - sortArray[j];
+                    }
+                }
+            }
+            var sortHtml = '';
+            sortArray.forEach(function(i) {
+                var html = items.eq(i).prop('outerHTML')
+                sortHtml += html
+            })
+            var table = items.parent();
+            items.remove();
+            table.append(sortHtml);
+            $(this).parent().parent().next().find('tr').each(function() {
+                $(this).children().each(function($i) {
+                    if($i == sortIdx) $(this).css('background-color', '#f5f5f5');
+                    else $(this).css('background-color', '#ffffff')
+                });
+            })
+            type == 'model' && registerModelClick();
+            type == 'channel' && registerChannelClick();
+            type == 'size' && registerSizeClick();
         })
     });
+    function registerModelClick() {
+        $('.model').click(function() {
+            var model = $(this).attr('data');
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&model=' + model);
+        })
+    }
+    function registerChannelClick() {
+        $('.channel').click(function() {
+            var channel = $(this).attr('data');
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&channel=' + channel);
+        })
+    }
+    function registerSizeClick() {
+        $('.size').click(function() {
+            var size = $(this).attr('data');
+            window.open( '{{$context}}/stats/Detail?y={{$year}}&d={{$meta["full"]}}&i={{$i}}&size=' + size);
+        })
+    }
+    var sortIdxArray = {
+        channel: 1,
+        model: 1,
+        size: 1
+    }
+    function nextSortIdx(name) {
+        (sortIdxArray[name] == 4) ? sortIdxArray[name] = 1 : ++sortIdxArray[name];
+        return sortIdxArray[name];
+    }
 </script>
 </html>

@@ -30,10 +30,15 @@ class Helper {
             );
             $statsFields = 'sum(o.price) as amount, count(*) as quantity, quarter(o.create_time) as i';
             $time = 'year(o.create_time)='.$year.' and quarter(o.create_time)='.$i;
+            if($i == 1) {
+                $prevTime = 'year(o.create_time)='.($year-1).' and quarter(o.create_time)=4';
+            }
+            else {
+                $prevTime = 'year(o.create_time)='.$year.' and quarter(o.create_time)='.($i-1);
+            }
             $meta = array(
                 'full' => 'Quarter',
-                'short' =>  'Q',
-                'chinese' => '季度'
+                'short' =>  'Q'
             );
         } else if($target == 'month') {
             list($prev) = $pdo->_fetchArray(
@@ -44,10 +49,15 @@ class Helper {
             );
             $statsFields = 'sum(o.price) as amount, count(*) as quantity, month(o.create_time) as i';
             $time = 'year(o.create_time)='.$year.' and month(o.create_time)='.$i;
+            if($i == 1) {
+                $prevTime = 'year(o.create_time)='.($year-1).' and month(o.create_time)=12';
+            }
+            else {
+                $prevTime = 'year(o.create_time)='.$year.' and month(o.create_time)='.($i-1);
+            }
             $meta = array(
                 'full' => 'Month',
-                'short' =>  'M',
-                'chinese' => '月'
+                'short' =>  'M'
             );
         } else {
             list($prev) = $pdo->_fetchArray(
@@ -58,10 +68,15 @@ class Helper {
             );
             $statsFields = 'sum(o.price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
             $time = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.$i;
+            if($i == 1) {
+                $prevTime = 'year(o.create_time)='.($year-1).' and weekofyear(o.create_time)='.date('W', strtotime(date('Y-12-31', strtotime("$year -1 year"))));
+            }
+            else {
+                $prevTime = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.($i-1);
+            }
             $meta = array(
                 'full' => 'Week',
-                'short' =>  'W',
-                'chinese' => '周'
+                'short' =>  'W'
             );
         }
 
@@ -93,6 +108,24 @@ class Helper {
             array('group' => 'o.channel', 'order' => 'quantity desc'),
             0, 0, 0
         );
+        $prevChannelStats = $pdo->_fetchArray(
+            $tables,
+            'o.channel, sum(o.price) as amount, count(*) as quantity',
+            array(array('o.prototype_id=p.id and '.$manufactory.' and '.$prevTime)),
+            array('group' => 'o.channel', 'order' => 'quantity desc'),
+            0, 0, 0
+        );
+        foreach($channelStats as &$item) {
+            $item['quantityRatio'] = '';
+            $item['amountRatio'] = '';
+            foreach($prevChannelStats as $prevItem) {
+                if($item['channel'] == $prevItem['channel']) {
+                    if($prevItem['quantity'] != 0) $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevItem['quantity']) / $prevItem['quantity'] * 100);
+                    if($prevItem['amount'] != 0) $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevItem['amount']) / $prevItem['amount'] * 100);
+                    break 1;
+                }
+            }
+        }
 
         $sizeStats = $pdo->_fetchArray(
             $tables,
@@ -101,6 +134,24 @@ class Helper {
             array('group' => 'o.size', 'order' => 'quantity desc'),
             0, 0, 0
         );
+        $prevSizeStats = $pdo->_fetchArray(
+            $tables,
+            'o.size, sum(o.price) as amount, count(*) as quantity',
+            array(array('o.prototype_id=p.id and '.$manufactory.' and '.$prevTime)),
+            array('group' => 'o.size', 'order' => 'quantity desc'),
+            0, 0, 0
+        );
+        foreach($sizeStats as &$item) {
+            $item['quantityRatio'] = '';
+            $item['amountRatio'] = '';
+            foreach($prevSizeStats as $prevItem) {
+                if($item['channel'] == $prevItem['channel']) {
+                    if($prevItem['quantity'] != 0) $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevItem['quantity']) / $prevItem['quantity'] * 100);
+                    if($prevItem['amount'] != 0) $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevItem['amount']) / $prevItem['amount'] * 100);
+                    break 1;
+                }
+            }
+        }
 
         $modelStats = $pdo->_fetchArray(
             $tables,
@@ -109,6 +160,24 @@ class Helper {
             array('group' => 'p.model', 'order' => 'quantity desc'),
             0, 0, 0
         );
+        $prevModelStats = $pdo->_fetchArray(
+            $tables,
+            'p.model, sum(o.price) as amount, count(*) as quantity',
+            array(array('o.prototype_id=p.id and '.$manufactory.' and '.$prevTime)),
+            array('group' => 'p.model', 'order' => 'quantity desc'),
+            0, 0, 0
+        );
+        foreach($modelStats as &$item) {
+            $item['quantityRatio'] = '';
+            $item['amountRatio'] = '';
+            foreach($prevModelStats as $prevItem) {
+                if($item['channel'] == $prevItem['channel']) {
+                    if($prevItem['quantity'] != 0) $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevItem['quantity']) / $prevItem['quantity'] * 100);
+                    if($prevItem['amount'] != 0) $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevItem['amount']) / $prevItem['amount'] * 100);
+                    break 1;
+                }
+            }
+        }
 
         global $smarty;
         $smarty->assign('title', '销售统计');
