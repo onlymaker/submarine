@@ -145,7 +145,7 @@ class Helper {
             $item['quantityRatio'] = '';
             $item['amountRatio'] = '';
             foreach($prevSizeStats as $prevItem) {
-                if($item['channel'] == $prevItem['channel']) {
+                if($item['size'] == $prevItem['size']) {
                     if($prevItem['quantity'] != 0) $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevItem['quantity']) / $prevItem['quantity'] * 100);
                     if($prevItem['amount'] != 0) $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevItem['amount']) / $prevItem['amount'] * 100);
                     break 1;
@@ -171,7 +171,7 @@ class Helper {
             $item['quantityRatio'] = '';
             $item['amountRatio'] = '';
             foreach($prevModelStats as $prevItem) {
-                if($item['channel'] == $prevItem['channel']) {
+                if($item['model'] == $prevItem['model']) {
                     if($prevItem['quantity'] != 0) $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevItem['quantity']) / $prevItem['quantity'] * 100);
                     if($prevItem['amount'] != 0) $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevItem['amount']) / $prevItem['amount'] * 100);
                     break 1;
