@@ -242,6 +242,7 @@ class SQL {
 		}
 		if ($this->trans && $auto)
 			$this->commit();
+		if ($fw->get('SHOW_SQL') && function_exists(trace)) trace($this->log);
 		return $result;
 	}
 
