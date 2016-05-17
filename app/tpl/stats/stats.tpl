@@ -21,7 +21,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
     <div class='row' style='margin-top: 15px'>
         <table class='table'>
             <tr class='stats-highlight'>
-                <td><strong>{{$year}}{{$meta['short']}}{{$i}}</strong></td>
+                <td><strong>{{$year}}{{$meta['short']}}{{$i}}{{if $meta['short'] == 'W'}} ({{$meta['monday']}} : {{$meta['sunday']}}){{/if}}</strong></td>
                 <td>销量</td><td>{{$stats[$i-1]['quantity']}}</td><td>{{$stats[$i-1]['quantityRatio']}}</td>
                 <td>销售额</td><td>{{$stats[$i-1]['amount']}}</td><td>{{$stats[$i-1]['amountRatio']}}</td>
             </tr>
@@ -31,7 +31,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
         <table class='table table-hover table-bordered'>
             {{foreach $stats as $item}}
                 <tr class='stats-list-item' data='{{$item["i"]}}'>
-                    <td><strong>{{$year}}{{$meta['short']}}{{$item['i']}}</strong></td>
+                    <td><strong>{{$year}}{{$meta['short']}}{{$item['i']}}{{if $meta['short'] == 'W'}} ({{$item['monday']}} : {{$item['sunday']}}){{/if}}</strong></td>
                     <td>销量</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td>
                     <td>销售额</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td>
                 </tr>

@@ -74,9 +74,12 @@ class Helper {
             else {
                 $prevTime = 'year(o.create_time)='.$year.' and weekofyear(o.create_time)='.($i-1);
             }
-            $meta = array(
-                'full' => 'Week',
-                'short' =>  'W'
+            $meta = array_merge(
+                array(
+                    'full' => 'Week',
+                    'short' =>  'W'
+                ),
+                $this->getWeekDate($year, $i)
             );
         }
 
@@ -98,6 +101,12 @@ class Helper {
                 else $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $stats[$idx-1]['amount']) / $stats[$idx-1]['amount'] * 100);
                 if($stats[$idx-1]['quantity'] == 0) $item['quantityRatio'] = 'undefined';
                 else $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $stats[$idx-1]['quantity']) / $stats[$idx-1]['quantity'] * 100);
+            }
+            if($target != 'quarter' && $target != 'month') {
+                $item = array_merge(
+                    $item,
+                    $this->getWeekDate($year, $idx)
+                );
             }
         }
 
@@ -190,5 +199,23 @@ class Helper {
         $smarty->assign('sizeStats', $sizeStats);
         $smarty->assign('modelStats', $modelStats);
         $smarty->display('stats/stats.tpl');
+    }
+
+    function getWeekDate($year, $weekNumber) {
+        $firstDay = mktime(0, 0, 0, 1, 1, $year);
+        $firstWeekDay = date('N', $firstDay);
+        $firstWeekNumber = date('W', $firstDay);
+        if ($firstWeekNumber == 1) {
+            $day = (1 - ($firstWeekDay - 1)) + 7 * ($weekNumber - 1);
+            $monday = date('Y-m-d', mktime(0, 0, 0, 1, $day, $year));
+            $sunday = date('Y-m-d', mktime(0, 0, 0, 1, $day + 6, $year));
+        } else {
+            $day = (9 - $firstWeekDay) + 7 * ($weekNumber - 1);
+            $monday = date('Y-m-d', mktime(0, 0, 0, 1, $day, $year));
+            $sunday = date('Y-m-d', mktime(0, 0, 0, 1, $day + 6, $year));
+        }
+        return array(
+            'monday' => $monday,
+            'sunday' => $sunday);
     }
 }
