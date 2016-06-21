@@ -105,7 +105,7 @@ class Helper {
             if($target != 'quarter' && $target != 'month') {
                 $item = array_merge(
                     $item,
-                    $this->getWeekDate($year, $idx)
+                    $this->getWeekDate($year, $item['i'])
                 );
             }
         }
