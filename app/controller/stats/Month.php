@@ -14,6 +14,6 @@ class Month extends Base {
         $i = isset($_GET['i']) ? (int)$_GET['i'] : 1;
         $t = isset($_GET['t']) ? $_GET['t'] : 'shoe';
         $helper = new Helper();
-        $helper->statsWeekOrMonth($y, $i, $t, 'month');
+        $helper->statsByTime($y, $i, $t, 'month');
     }
 } 

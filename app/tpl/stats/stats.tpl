@@ -39,7 +39,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
         </table>
     </div>
     <div class='row'>
-        <div class='col-md-4'>
+        <div class='col-md-6'>
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>渠道</h3>
@@ -52,7 +52,22 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                 {{/foreach}}
             </table>
         </div>
-        <div class='col-md-4'>
+        <div class='col-md-6'>
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>产品标签</h3>
+                    <span class='glyphicon glyphicon-retweet sort' data='tag'></span>
+                </div>
+            </div>
+            <table class='table table-bordered table-condensed'>
+                {{foreach $tagStats as $item}}
+                    <tr class='tag' data='{{$item["tag"]}}'><td>{{$item['tag']}}</td><td>{{$item['quantity']}}</td><td>{{$item['quantityRatio']}}</td><td>{{$item['amount']}}</td><td>{{$item['amountRatio']}}</td></tr>
+                {{/foreach}}
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class='col-md-6'>
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>产品型号</h3>
@@ -65,7 +80,7 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
                 {{/foreach}}
             </table>
         </div>
-        <div class='col-md-4'>
+        <div class='col-md-6'>
             <div class='panel panel-default'>
                 <div class='panel-heading'>
                     <h3 class='panel-title'>尺码</h3>
@@ -161,7 +176,8 @@ body {font-family: '微软雅黑', 'Microsoft Yahei', '宋体', 'songti', STHeit
     var sortIdxArray = {
         channel: 1,
         model: 1,
-        size: 1
+        size: 1,
+        tag: 1
     }
     function nextSortIdx(name) {
         (sortIdxArray[name] == 4) ? sortIdxArray[name] = 1 : ++sortIdxArray[name];

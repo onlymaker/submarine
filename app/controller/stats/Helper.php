@@ -8,8 +8,11 @@
 
 namespace controller\stats;
 
+use db\SqlMapper;
+use utils\Tag;
+
 class Helper {
-    function statsWeekOrMonth($y, $i, $t, $target='week') {
+    function statsByTime($y, $i, $t, $target='week') {
         $pdo = new \db\Base();
         $tables = array(
             'order_item' => 'o',
@@ -188,6 +191,49 @@ class Helper {
             }
         }
 
+        $tags = Tag::getTages();
+        $tagStats = array();
+        $prevTagStats = array();
+        foreach($tags as $tag) {
+            $db = SqlMapper::getDbEngine();
+            $sql = <<<SQL
+SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
+WHERE o.order_state=5 AND {$time} AND o.prototype_id in 
+(SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
+SQL;
+            trace("tag stats: " . $sql);
+            list($result) = $db->exec($sql);
+            $tagStats[] = array(
+                "tag" => $tag,
+                "quantity" => $result["quantity"],
+                "amount" => $result["price"]
+            );
+            $sql = <<<SQL
+SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
+WHERE o.order_state=5 AND {$prevTime} AND o.prototype_id in 
+(SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
+SQL;
+            trace("prev tag stats: " . $sql);
+            list($result) = $db->exec($sql);
+            $prevTagStats[] = array(
+                "tag" => $tag,
+                "quantity" => $result["quantity"],
+                "amount" => $result["price"]
+            );
+        }
+        foreach($tagStats as $index=>&$item) {
+            if($prevTagStats[$index]['quantity'] != 0) {
+                $item['quantityRatio'] = sprintf('%.2f%%', ($item['quantity'] - $prevTagStats[$index]['quantity']) / $prevTagStats[$index]['quantity'] * 100);
+            } else {
+                $item['quantityRatio'] = '';
+            }
+            if($prevTagStats[$index]['amount'] != 0) {
+                $item['amountRatio'] = sprintf('%.2f%%', ($item['amount'] - $prevTagStats[$index]['amount']) / $prevTagStats[$index]['amount'] * 100);
+            } else {
+                $item['amountRatio'] = '';
+            }
+        }
+
         global $smarty;
         $smarty->assign('title', '销售统计');
         $smarty->assign('i', $i);
@@ -198,6 +244,7 @@ class Helper {
         $smarty->assign('channelStats', $channelStats);
         $smarty->assign('sizeStats', $sizeStats);
         $smarty->assign('modelStats', $modelStats);
+        $smarty->assign('tagStats', $tagStats);
         $smarty->display('stats/stats.tpl');
     }
 

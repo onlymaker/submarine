@@ -17,13 +17,6 @@ class Tag extends Base {
     }
 
     function post() {
-        $content = explode("\r\n", substr(file_get_contents(ROOT . "/static/js/tag.js"), strlen("var tag = ")));
-        array_shift($content);
-        array_pop($content);
-        $rows = array();
-        foreach($content as $tag) {
-            $rows[] = substr(str_replace("]", "", str_replace("[", "", trim($tag))), 0, -1);
-        }
-        echo json_encode($rows, JSON_UNESCAPED_UNICODE);
+        echo json_encode(\utils\Tag::getTages(), JSON_UNESCAPED_UNICODE);
     }
 } 
