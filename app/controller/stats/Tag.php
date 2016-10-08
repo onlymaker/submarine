@@ -17,6 +17,6 @@ class Tag extends Base {
     }
 
     function post() {
-        echo json_encode(\utils\Tag::getTages(), JSON_UNESCAPED_UNICODE);
+        echo json_encode(\utils\Tag::getTags(), JSON_UNESCAPED_UNICODE);
     }
 } 

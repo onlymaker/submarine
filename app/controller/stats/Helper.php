@@ -191,7 +191,7 @@ class Helper {
             }
         }
 
-        $tags = Tag::getTages();
+        $tags = Tag::getTags();
         $tagStats = array();
         $prevTagStats = array();
         foreach($tags as $tag) {
