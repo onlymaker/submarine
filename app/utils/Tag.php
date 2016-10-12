@@ -10,7 +10,7 @@ namespace utils;
 
 class Tag {
     public static function getTags() {
-        $content = explode("\r\n", substr(file_get_contents(ROOT . "/static/js/tag.js"), strlen("var tag = ")));
+        $content = explode("\n", substr(file_get_contents(ROOT . "/static/js/tag.js"), strlen("var tag = ")));
         array_shift($content);
         array_pop($content);
         $size = count($content);
