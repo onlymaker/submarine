@@ -198,7 +198,7 @@ class Helper {
             $db = SqlMapper::getDbEngine();
             $sql = <<<SQL
 SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
-WHERE o.order_state=5 AND {$time} AND o.prototype_id in 
+WHERE {$time} AND o.prototype_id in 
 (SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
 SQL;
             trace("tag stats: " . $sql);
@@ -210,7 +210,7 @@ SQL;
             );
             $sql = <<<SQL
 SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
-WHERE o.order_state=5 AND {$prevTime} AND o.prototype_id in 
+WHERE {$prevTime} AND o.prototype_id in 
 (SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
 SQL;
             trace("prev tag stats: " . $sql);
