@@ -1,35 +1,51 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jibo
- * Date: 16/3/12
- * Time: 10:32
- */
 
 namespace controller\api;
 
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 use utils\ImageHandler;
 
-class Image extends Base {
+class Image extends Base
+{
 
-    function beforeRoute() {
+    function beforeRoute()
+    {
         header('Access-Control-Allow-Origin:*');
     }
 
-    function post() {
+    function post()
+    {
         global $f3;
 
         $dir = $f3->get('IMAGE_DIR');
-        if(!is_dir($dir)) mkdir($dir, 0777, true);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
 
         $hashName = hash('md5', time());
-        $fileName = $hashName.strrchr($_FILES['file']['name'], '.');
-        $thumbName = $hashName.'_thumb'.strrchr($_FILES['file']['name'], '.');
-        file_put_contents($dir.$fileName, file_get_contents($_FILES['file']['tmp_name']));
+        $fileName = $hashName . strrchr($_FILES['file']['name'], '.');
+        $thumbName = $hashName . '_thumb' . strrchr($_FILES['file']['name'], '.');
+        file_put_contents($dir . $fileName, file_get_contents($_FILES['file']['tmp_name']));
 
-        trace('Image upload:'.$dir.$fileName);
+        trace('Image upload:' . $dir . $fileName);
 
-        ImageHandler::resizeImage($dir, $fileName, $dir, $thumbName, 300, 300);
+        $auth = new Auth($f3->get('QINIU_ACCESS_KEY'), $f3->get('QINIU_SECRET_KEY'));
+        $bucket = $f3->get('QINIU_BUCKET');
+        $token = $auth->uploadToken($bucket);
+        $filePath = $dir . $fileName;
+        $key = $fileName;
+        $uploadMgr = new UploadManager();
+        list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+        if ($err !== null) {
+            ob_start();
+            var_dump($err);
+            trace(ob_get_clean());
+            ImageHandler::resizeImage($dir, $fileName, $dir, $thumbName, 300, 300);
+        } else {
+            unlink($dir . $fileName);
+            $thumbName = $fileName . '?imageView2/0/w/300/h/300';
+        }
 
         echo $thumbName;
     }
