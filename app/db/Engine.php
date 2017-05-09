@@ -17,9 +17,9 @@ class Engine extends \DB\SQL
         parent::__construct($dsn, $user, $pw, $options);
     }
 
-    function exec($cmds, $args = null, $ttl = 0, $log = true)
+    function exec($cmds, $args = null, $ttl = 0, $log = true, $stamp = false)
     {
-        return parent::exec($cmds, $args, $ttl, $log);
+        return parent::exec($cmds, $args, $ttl, $log, $stamp);
     }
 
 }
