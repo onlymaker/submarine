@@ -1,0 +1,8 @@
+{
+  "name": "syncxplus/php-validation",
+  "version": "1.0.0",
+  "description": "Fork from blackbelt/php-validation",
+  "autoload": {
+    "classmap": ["."]
+  }
+}

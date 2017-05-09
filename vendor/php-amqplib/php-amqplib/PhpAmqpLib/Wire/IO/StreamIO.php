@@ -18,10 +18,10 @@ class StreamIO extends AbstractIO
     /** @var int */
     protected $port;
 
-    /** @var int */
+    /** @var float */
     protected $connection_timeout;
 
-    /** @var int */
+    /** @var float */
     protected $read_write_timeout;
 
     /** @var resource */
@@ -54,8 +54,8 @@ class StreamIO extends AbstractIO
     /**
      * @param string $host
      * @param int $port
-     * @param int $connection_timeout
-     * @param int $read_write_timeout
+     * @param float $connection_timeout
+     * @param float $read_write_timeout
      * @param null $context
      * @param bool $keepalive
      * @param int $heartbeat
@@ -69,6 +69,10 @@ class StreamIO extends AbstractIO
         $keepalive = false,
         $heartbeat = 0
     ) {
+        if ($heartbeat !== 0 && ($read_write_timeout < ($heartbeat * 2))) {
+            throw new \InvalidArgumentException('read_write_timeout must be at least 2x the heartbeat');
+        }
+
         $this->protocol = 'tcp';
         $this->host = $host;
         $this->port = $port;
@@ -129,7 +133,7 @@ class StreamIO extends AbstractIO
                 STREAM_CLIENT_CONNECT,
                 $this->context
             );
-        } catch (\Exception $e) {
+        } catch (\ErrorException $e) {
             restore_error_handler();
             throw $e;
         }
@@ -187,7 +191,7 @@ class StreamIO extends AbstractIO
     }
 
     /**
-     * @param $len
+     * @param int $len
      * @throws \PhpAmqpLib\Exception\AMQPIOException
      * @return mixed|string
      */
@@ -204,7 +208,12 @@ class StreamIO extends AbstractIO
             }
 
             set_error_handler(array($this, 'error_handler'));
-            $buffer = fread($this->sock, ($len - $read));
+            try {
+                $buffer = fread($this->sock, ($len - $read));
+            } catch (\ErrorException $e) {
+                restore_error_handler();
+                throw $e;
+            }
             restore_error_handler();
 
             if ($buffer === false) {
@@ -244,7 +253,7 @@ class StreamIO extends AbstractIO
     }
 
     /**
-     * @param $data
+     * @param string $data
      * @return mixed|void
      * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
@@ -268,7 +277,12 @@ class StreamIO extends AbstractIO
             // This behavior has been observed in OpenSSL dating back to at least
             // September 2002:
             // http://comments.gmane.org/gmane.comp.encryption.openssl.user/4361
-            $buffer = fwrite($this->sock, $data, 8192);
+            try {
+                $buffer = fwrite($this->sock, $data, 8192);
+            } catch (\ErrorException $e) {
+                restore_error_handler();
+                throw $e;
+            }
             restore_error_handler();
 
             if ($buffer === false) {
@@ -319,8 +333,6 @@ class StreamIO extends AbstractIO
              // it's allowed while processing signals
             return null;
         }
-
-        restore_error_handler();
 
         // raise all other issues to exceptions
         throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -387,8 +399,8 @@ class StreamIO extends AbstractIO
     }
 
     /**
-     * @param $sec
-     * @param $usec
+     * @param int $sec
+     * @param int $usec
      * @return int|mixed
      */
     public function select($sec, $usec)
@@ -399,7 +411,12 @@ class StreamIO extends AbstractIO
         $result = false;
 
         set_error_handler(array($this, 'error_handler'));
-        $result = stream_select($read, $write, $except, $sec, $usec);
+        try {
+            $result = stream_select($read, $write, $except, $sec, $usec);
+        } catch (\ErrorException $e) {
+            restore_error_handler();
+            throw $e;
+        }
         restore_error_handler();
 
         return $result;

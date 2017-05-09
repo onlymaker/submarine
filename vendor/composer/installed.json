@@ -1,23 +1,80 @@
 [
     {
-        "name": "bcosca/fatfree-core",
-        "version": "3.5.1",
-        "version_normalized": "3.5.1.0",
+        "name": "smarty/smarty",
+        "version": "v3.1.29",
+        "version_normalized": "3.1.29.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/bcosca/fatfree-core.git",
-            "reference": "f7ce46c9f93808ec52b9cb904bcb02367c29ca43"
+            "url": "https://github.com/smarty-php/smarty.git",
+            "reference": "35480f10e7ce9b0fdaf23d3799d7b79463919b1e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/bcosca/fatfree-core/zipball/f7ce46c9f93808ec52b9cb904bcb02367c29ca43",
-            "reference": "f7ce46c9f93808ec52b9cb904bcb02367c29ca43",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/35480f10e7ce9b0fdaf23d3799d7b79463919b1e",
+            "reference": "35480f10e7ce9b0fdaf23d3799d7b79463919b1e",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.6"
+            "php": ">=5.2"
         },
-        "time": "2015-12-31 17:11:22",
+        "time": "2015-12-21T01:57:06+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "libs/Smarty.class.php",
+                "libs/SmartyBC.class.php",
+                "libs/sysplugins/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Monte Ohrt",
+                "email": "monte@ohrt.com"
+            },
+            {
+                "name": "Uwe Tews",
+                "email": "uwe.tews@googlemail.com"
+            },
+            {
+                "name": "Rodney Rehm",
+                "email": "rodney.rehm@medialize.de"
+            }
+        ],
+        "description": "Smarty - the compiling PHP template engine",
+        "homepage": "http://www.smarty.net",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
+        "name": "bcosca/fatfree-core",
+        "version": "3.6.1",
+        "version_normalized": "3.6.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/bcosca/fatfree-core.git",
+            "reference": "59f337842a502b69fd5e2de28dce9460d6138fed"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/bcosca/fatfree-core/59f337842a502b69fd5e2de28dce9460d6138fed.zip",
+            "reference": "59f337842a502b69fd5e2de28dce9460d6138fed",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "time": "2017-04-02T09:44:00+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -34,17 +91,17 @@
     },
     {
         "name": "php-amqplib/php-amqplib",
-        "version": "v2.6.2",
-        "version_normalized": "2.6.2.0",
+        "version": "v2.6.3",
+        "version_normalized": "2.6.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-amqplib/php-amqplib.git",
-            "reference": "ba9468b08b5ff90859ef5069a6b9a70bcdd98fa1"
+            "reference": "fa2f0d4410a11008cb36b379177291be7ee9e4f6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/ba9468b08b5ff90859ef5069a6b9a70bcdd98fa1",
-            "reference": "ba9468b08b5ff90859ef5069a6b9a70bcdd98fa1",
+            "url": "https://files.phpcomposer.com/files/php-amqplib/php-amqplib/fa2f0d4410a11008cb36b379177291be7ee9e4f6.zip",
+            "reference": "fa2f0d4410a11008cb36b379177291be7ee9e4f6",
             "shasum": ""
         },
         "require": {
@@ -57,12 +114,13 @@
         },
         "require-dev": {
             "phpunit/phpunit": "^4.8",
-            "scrutinizer/ocular": "^1.1"
+            "scrutinizer/ocular": "^1.1",
+            "squizlabs/php_codesniffer": "^2.5"
         },
         "suggest": {
             "ext-sockets": "Use AMQPSocketConnection"
         },
-        "time": "2016-03-02 16:36:48",
+        "time": "2016-04-11T14:30:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -104,60 +162,82 @@
         ]
     },
     {
-        "name": "smarty/smarty",
-        "version": "v3.1.29",
-        "version_normalized": "3.1.29.0",
+        "name": "qiniu/php-sdk",
+        "version": "v7.1.3",
+        "version_normalized": "7.1.3.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "35480f10e7ce9b0fdaf23d3799d7b79463919b1e"
+            "url": "https://github.com/qiniu/php-sdk.git",
+            "reference": "b91653485e36b4797d7a302cc86c49695e47a642"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/35480f10e7ce9b0fdaf23d3799d7b79463919b1e",
-            "reference": "35480f10e7ce9b0fdaf23d3799d7b79463919b1e",
+            "url": "https://files.phpcomposer.com/files/qiniu/php-sdk/b91653485e36b4797d7a302cc86c49695e47a642.zip",
+            "reference": "b91653485e36b4797d7a302cc86c49695e47a642",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.2"
+            "php": ">=5.3.3"
         },
-        "time": "2015-12-21 01:57:06",
+        "require-dev": {
+            "phpunit/phpunit": "~4.0",
+            "squizlabs/php_codesniffer": "~2.3"
+        },
+        "time": "2016-11-18T02:57:31+00:00",
         "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.1.x-dev"
-            }
-        },
         "installation-source": "dist",
         "autoload": {
-            "classmap": [
-                "libs/Smarty.class.php",
-                "libs/SmartyBC.class.php",
-                "libs/sysplugins/"
+            "psr-4": {
+                "Qiniu\\": "src/Qiniu"
+            },
+            "files": [
+                "src/Qiniu/functions.php"
             ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPL-3.0"
+            "MIT"
         ],
         "authors": [
             {
-                "name": "Monte Ohrt",
-                "email": "monte@ohrt.com"
-            },
-            {
-                "name": "Uwe Tews",
-                "email": "uwe.tews@googlemail.com"
-            },
-            {
-                "name": "Rodney Rehm",
-                "email": "rodney.rehm@medialize.de"
+                "name": "Qiniu",
+                "email": "sdk@qiniu.com",
+                "homepage": "http://www.qiniu.com"
             }
         ],
-        "description": "Smarty - the compiling PHP template engine",
-        "homepage": "http://www.smarty.net",
+        "description": "Qiniu Resource (Cloud) Storage SDK for PHP",
+        "homepage": "http://developer.qiniu.com/",
         "keywords": [
-            "templating"
+            "cloud",
+            "qiniu",
+            "sdk",
+            "storage"
         ]
+    },
+    {
+        "name": "syncxplus/php-validation",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/syncxplus/php-validation.git",
+            "reference": "5a0f5f959181174d4532667ae34a2dbfb1a59f7a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/syncxplus/php-validation/5a0f5f959181174d4532667ae34a2dbfb1a59f7a.zip",
+            "reference": "5a0f5f959181174d4532667ae34a2dbfb1a59f7a",
+            "shasum": ""
+        },
+        "time": "2016-04-07T02:57:45+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "."
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "description": "Fork from blackbelt/php-validation"
     }
 ]

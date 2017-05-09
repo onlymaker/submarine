@@ -77,7 +77,7 @@ class MethodMap091
     );
 
     /**
-     * @var string
+     * @var string $method_sig
      * @return string
      */
     public function get_method($method_sig)
@@ -86,8 +86,8 @@ class MethodMap091
     }
 
     /**
-     * @var string
-     * @return boolean
+     * @var string $method_sig
+     * @return bool
      */
     public function valid_method($method_sig)
     {
