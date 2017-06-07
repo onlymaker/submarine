@@ -44,7 +44,6 @@ class Image extends Base
             ImageHandler::resizeImage($dir, $fileName, $dir, $thumbName, 300, 300);
         } else {
             unlink($dir . $fileName);
-            $thumbName = $fileName . '?imageView2/0/w/300/h/300';
         }
 
         echo $thumbName;
