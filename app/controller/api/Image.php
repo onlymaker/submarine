@@ -25,7 +25,6 @@ class Image extends Base
 
         $hashName = hash('md5', time());
         $fileName = $hashName . strrchr($_FILES['file']['name'], '.');
-        $thumbName = $hashName . '_thumb' . strrchr($_FILES['file']['name'], '.');
         file_put_contents($dir . $fileName, file_get_contents($_FILES['file']['tmp_name']));
 
         trace('Image upload:' . $dir . $fileName);
@@ -41,11 +40,10 @@ class Image extends Base
             ob_start();
             var_dump($err);
             trace(ob_get_clean());
-            ImageHandler::resizeImage($dir, $fileName, $dir, $thumbName, 300, 300);
         } else {
             unlink($dir . $fileName);
         }
 
-        echo $thumbName;
+        echo $fileName;
     }
 }
