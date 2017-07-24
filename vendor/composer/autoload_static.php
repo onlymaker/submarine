@@ -32,6 +32,16 @@ class ComposerStaticInitd6cbef38506b404406d66c4defd599a3
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Audit' => __DIR__ . '/..' . '/bcosca/fatfree-core/audit.php',
         'Auth' => __DIR__ . '/..' . '/bcosca/fatfree-core/auth.php',
@@ -250,6 +260,7 @@ class ComposerStaticInitd6cbef38506b404406d66c4defd599a3
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitd6cbef38506b404406d66c4defd599a3::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitd6cbef38506b404406d66c4defd599a3::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd6cbef38506b404406d66c4defd599a3::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitd6cbef38506b404406d66c4defd599a3::$classMap;
 
         }, null, ClassLoader::class);
