@@ -2,6 +2,7 @@
 
 namespace controller\stats\v2;
 
+use code\ProductMeta;
 use controller\stats\Base;
 use DB\SQL\Mapper;
 use db\SqlMapper;
@@ -9,7 +10,7 @@ use db\SqlMapper;
 class Upload extends Base
 {
     static $fields = [
-        'product-meta' => ['model', 'color', 'heel'],
+        'product-meta' => ['model', 'color', 'heel_height', 'occasion', 'heel_type', 'toe', 'structure'],
         'product-asin' => ['model', 'parent_asin', 'child_asin', 'store']
     ];
 
@@ -82,20 +83,30 @@ class Upload extends Base
                     'error' => 'model ' . $model . ' not existed'
                 ];
             } else {
-                $attribute = [];
                 unset($names['model']);
+                $attribute = [];
                 foreach ($names as $name => $index) {
-                    $attribute[$name] = $row[$index];
+                    $value = preg_replace('/\s/', '', $row[$index]);
+                    if (ProductMeta::validate($name, $value)) {
+                        $attribute[$name] = $value;
+                    } else {
+                        $result[] = [
+                            'row' => $r,
+                            'error' => $name . ':' . $value . ' is invalid'
+                        ];
+                    }
                 }
-                $json = json_encode($attribute);
-                if ($json) {
-                    $prototype['attribute'] = $json;
-                    $prototype->save();
-                } else {
-                    $result[] = [
-                        'row' => $r,
-                        'error' => json_last_error_msg()
-                    ];
+                if (count($attribute) == count($names)) {
+                    $json = json_encode($attribute);
+                    if ($json) {
+                        $prototype['attribute'] = $json;
+                        $prototype->save();
+                    } else {
+                        $result[] = [
+                            'row' => $r,
+                            'error' => json_last_error_msg()
+                        ];
+                    }
                 }
             }
         }
@@ -110,27 +121,35 @@ class Upload extends Base
     {
         $db = SqlMapper::getDbEngine();
         $db->begin();
-        $mapper = new Mapper($db, 'asin');
+        $asin = new Mapper($db, 'asin');
+        $prototype = new Mapper($db, 'prototype');
         $result = [];
-        $fields = self::$fields['product-asin'];
+        $names = array_flip(self::$fields['product-asin']);
         foreach ($data as $r => $row) {
-            $tmp = [];
-            foreach ($row as $key => $value) {
-                if ($fields[$key]) {
-                    $tmp[$fields[$key]] = preg_replace('/\s/', '', $value);
-                }
-            }
-            $mapper->load(['model = ? AND parent_asin = ? AND child_asin = ?', $tmp['model'], $tmp['parent_asin'], $tmp['child_asin']]);
-            if ($mapper->dry()) {
-                foreach ($tmp as $key => $value) {
-                    $mapper[$key] = $value;
-                }
-                $mapper->save();
-            } else {
+            $model = preg_replace('/\s/', '', $row[$names['model']]);
+            $prototype->load(['model = ?', $model]);
+            if ($prototype->dry()) {
                 $result[] = [
                     'row' => $r,
-                    'error' => 'already exists'
+                    'error' => 'model ' . $model . ' not existed'
                 ];
+            } else {
+                $tmp = [];
+                foreach ($names as $name => $index) {
+                    $tmp[$name] = preg_replace('/\s/', '', $row[$index]);
+                }
+                $asin->load(['model = ? AND parent_asin = ? AND child_asin = ?', $tmp['model'], $tmp['parent_asin'], $tmp['child_asin']]);
+                if ($asin->dry()) {
+                    foreach ($tmp as $key => $value) {
+                        $asin[$key] = $value;
+                    }
+                    $asin->save();
+                } else {
+                    if ($asin['store'] != $tmp['store']) {
+                        $asin['store'] = $tmp['store'];
+                        $asin->save();
+                    }
+                }
             }
         }
         $db->commit();
