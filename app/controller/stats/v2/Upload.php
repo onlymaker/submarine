@@ -92,7 +92,7 @@ class Upload extends Base
                     } else {
                         $result[] = [
                             'row' => $r,
-                            'error' => $name . ':' . $value . ' is invalid'
+                            'error' => $name . ': ' . $value . ' is invalid'
                         ];
                     }
                 }

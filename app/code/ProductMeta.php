@@ -16,7 +16,7 @@ class ProductMeta
     static function validate($name, $value)
     {
         $name = StringUtils::snakeToCamel($name);
-        if (isset($$name)) {
+        if (isset(self::$$name)) {
             return in_array($value, self::$$name);
         } else {
             return false;
