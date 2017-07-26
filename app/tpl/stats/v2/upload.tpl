@@ -20,10 +20,10 @@
     <div class="form-group">
         <label>选择文件</label>
         <input id="upload-file" class="form-control" type="file" name="file"/>
-        <div class="btn-group">
-            <button id="cancel-btn" class="btn btn-default">取消</button>
-            <button id="upload-btn" class="btn btn-primary">上传</button>
-        </div>
+    </div>
+    <div class="btn-group">
+        <button id="cancel-btn" class="btn btn-default">取消</button>
+        <button id="upload-btn" class="btn btn-primary">上传</button>
     </div>
 </div>
 <script>
@@ -64,7 +64,7 @@
                     alert(result);
                 })
                 .fail(function (error) {
-                    console.log(error);
+                    console.error(error);
                     alert(error)
                 })
                 .always(function () {
