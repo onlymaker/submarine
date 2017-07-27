@@ -291,8 +291,11 @@ class SQL {
 	*	@param $flag bool
 	**/
 	function log($flag=TRUE) {
-		if ($flag)
-			return $this->log;
+		if ($flag) {
+			$log = $this->log;
+			$this->log = '';
+			return $log;
+		}
 		$this->log=FALSE;
 	}
 
