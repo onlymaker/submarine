@@ -13,10 +13,14 @@ class SKU extends Base
         global $smarty;
         $smarty->assign('title', 'SKU - stats');
         if ($f3->VERB == 'POST') {
-            $model = $_POST['sku'];
-            $market = $_POST['market'];
-            $start = $_POST['start'];
-            $end = $_POST['end'];
+            $params = [
+                'model' => $_POST['sku'],
+                'market' => $_POST['market'],
+                'start' => $_POST['start'],
+                'end' => $_POST['end'],
+            ];
+            $smarty->assign('data', $this->query($params));
+            $smarty->display('stats/v2/sku_result.tpl');
         } else {
             $smarty->display('stats/v2/sku.tpl');
         }
@@ -50,5 +54,25 @@ class SKU extends Base
             return;
         }
         echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
+    }
+
+    /*
+     * SELECT channel, size, count(*) FROM order_item WHERE prototype_id = ? AND create_time > ? AND create_time < ? AND channel %s GROUP by channel, size
+     */
+    function query($params)
+    {
+        switch (strtoupper($params['market'])) {
+            case 'AMUS':
+                $channel = "in ('AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA)";
+                break;
+            case 'AMEU ':
+                $channel = "in ('AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKEU', 'AKEU-FBA')";
+                break;
+            case 'ALI':
+                $channel = "in ('ALI', 'ALI-FBA)";
+                break;
+            default:
+
+        }
     }
 }

@@ -20,7 +20,7 @@ class StringUtils
     {
         $parts = explode('_', $snake);
         foreach ($parts as &$part) {
-            ucfirst($part);
+            $part = ucfirst($part);
         }
         return lcfirst(implode('', $parts));
     }

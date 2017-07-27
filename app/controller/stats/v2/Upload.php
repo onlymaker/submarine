@@ -75,24 +75,26 @@ class Upload extends Base
         $result = [];
         $names = array_flip(self::$fields['product-meta']);
         foreach ($data as $r => $row) {
-            $model = preg_replace('/\s/', '', $row[$names['model']]);
-            $prototype->load(['model = ?', $model]);
+            $model = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]);
+            if (!empty($model)) {
+                $prototype->load(['model = ?', $model]);
+            }
             if ($prototype->dry()) {
                 $result[] = [
-                    'row' => $r,
+                    'row' => $r + 1,
                     'error' => 'model ' . $model . ' not existed'
                 ];
             } else {
                 unset($names['model']);
                 $attribute = [];
                 foreach ($names as $name => $index) {
-                    $value = preg_replace('/\s/', '', $row[$index]);
+                    $value = strtolower(preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]));
                     if (ProductMeta::validate($name, $value)) {
                         $attribute[$name] = $value;
                     } else {
                         $result[] = [
-                            'row' => $r,
-                            'error' => $name . ': ' . $value . ' is invalid'
+                            'row' => $r + 1,
+                            'error' => $model . ' ' . $name . ': ' . $value . ' is invalid'
                         ];
                     }
                 }
@@ -103,7 +105,7 @@ class Upload extends Base
                         $prototype->save();
                     } else {
                         $result[] = [
-                            'row' => $r,
+                            'row' => $r + 1,
                             'error' => json_last_error_msg()
                         ];
                     }
@@ -126,17 +128,19 @@ class Upload extends Base
         $result = [];
         $names = array_flip(self::$fields['product-asin']);
         foreach ($data as $r => $row) {
-            $model = preg_replace('/\s/', '', $row[$names['model']]);
-            $prototype->load(['model = ?', $model]);
+            $model = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]);
+            if (!empty($model)) {
+                $prototype->load(['model = ?', $model]);
+            }
             if ($prototype->dry()) {
                 $result[] = [
-                    'row' => $r,
+                    'row' => $r + 1,
                     'error' => 'model ' . $model . ' not existed'
                 ];
             } else {
                 $tmp = [];
                 foreach ($names as $name => $index) {
-                    $tmp[$name] = preg_replace('/\s/', '', $row[$index]);
+                    $tmp[$name] = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]);
                 }
                 $asin->load(['model = ? AND parent_asin = ? AND child_asin = ?', $tmp['model'], $tmp['parent_asin'], $tmp['child_asin']]);
                 if ($asin->dry()) {

@@ -58,7 +58,6 @@
                     var result = (json.error.code == 0) ? "上传完成" : "上传失败";
                     for(var i in json.result) {
                         var row = json.result[i].row;
-                        row++;
                         result += "\n第" + row + "行: " + json.result[i].error;
                     }
                     alert(result);
