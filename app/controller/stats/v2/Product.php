@@ -19,29 +19,33 @@ class Product extends Base
             $attrField = '$.' . StringUtils::camelToSnake($attribute);
             $start = $_POST['start-date'];
             $end = $_POST['end-date'];
-            $sql = 'SELECT p.attribute->? as ?, count(*) as count FROM prototype p, order_item o WHERE p.attribute is not null AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ? GROUP by p.attribute->? ORDER BY 1';
-            $query = $db->exec($sql, [$attrField, $attribute, $start, $end, $attrField]);
+            $sql = 'SELECT p.attribute->? as attribute, count(*) as count FROM prototype p, order_item o WHERE p.attribute is not null AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ? GROUP by p.attribute->? ORDER BY 1';
+            $query = $db->exec($sql, [$attrField, $start, $end, $attrField]);
             $data = [];
             foreach ($query as $item) {
-                $data[$item[$attribute]] = ['count' => $item['count']];
+                $data[$item['attribute']] = ['count' => $item['count']];
+                $top = $db->exec('SELECT model, count(*) as count FROM prototype p, order_item o WHERE p.attribute->? = ? AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ? GROUP BY model ORDER BY count DESC', [$attrField, str_replace('"', '', $item['attribute']), $start, $end]);
+                foreach ($top as $key => $value) {
+                    $data[$item['attribute']]['t' . $key] = $value['model'];
+                }
             }
 
             $days = ceil(((strtotime($end) - strtotime($start)) / (24 * 3600)));
             $start = date('Y-m-d H:i:s', strtotime("$start - $days days"));
             $end = date('Y-m-d H:i:s', strtotime("$end - $days days"));
-            $sql = 'SELECT p.attribute->? as ?, count(*) as count FROM prototype p, order_item o WHERE p.attribute is not null AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ? GROUP by p.attribute->? ORDER BY 1';
-            $query = $db->exec($sql, [$attrField, $attribute, $start, $end, $attrField]);
+            $sql = 'SELECT p.attribute->? as attribute, count(*) as count FROM prototype p, order_item o WHERE p.attribute is not null AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ? GROUP by p.attribute->? ORDER BY 1';
+            $query = $db->exec($sql, [$attrField, $start, $end, $attrField]);
             $chain = [];
             foreach ($query as $item) {
-                $chain[$item[$attribute]] = ['count' => $item['count']];
+                $chain[$item['attribute']] = ['count' => $item['count']];
             }
 
             list($total) = $db->exec('SELECT count(*) as count FROM prototype p, order_item o WHERE p.attribute is not null AND p.ID = o.prototype_id AND o.replacement = 0 AND o.create_time > ? AND o.create_time < ?', [$start, $end]);
-            foreach ($data as $attribute => &$attrStats) {
+            foreach ($data as $attr => &$attrStats) {
                 $count = $attrStats['count'];
                 $attrStats['ratio'] = sprintf('%.2f', $count / ($total['count'] ?? $count));
-                if ($chain[$attribute] && $chain[$attribute]['count']) {
-                    $prev = $chain[$attribute]['count'];
+                if ($chain[$attr] && $chain[$attr]['count']) {
+                    $prev = $chain[$attr]['count'];
                     $attrStats['chainRatio'] = sprintf('%.2f', ($count - $prev) / $prev);
                 } else {
                     $attrStats['chainRatio'] = '-';

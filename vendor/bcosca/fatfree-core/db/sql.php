@@ -202,7 +202,6 @@ class SQL {
 							str_replace('?',chr(0).'?',$cmd),1).PHP_EOL;
 			}
 			elseif (is_object($query=$this->pdo->prepare($cmd))) {
-			    trace('1:' . $cmd);
 				foreach ($arg as $key=>$val) {
 					if (is_array($val)) {
 						// User-specified data type
@@ -220,16 +219,12 @@ class SQL {
 					$keys[]='/'.preg_quote(is_numeric($key)?chr(0).'?':$key).
 						'/';
 				}
-                trace('2:' . $cmd);
-
-                if ($log)
+				if ($log)
 					$this->log.=($stamp?(date('r').' '):'').' (-0ms) '.
 						preg_replace($keys,$vals,
 							str_replace('?',chr(0).'?',$cmd),1).PHP_EOL;
-                trace($query->queryString);
 				$query->execute();
-                trace($query->queryString);
-                if ($log)
+				if ($log)
 					$this->log=str_replace('(-0ms)',
 						'('.sprintf('%.1f',1e3*(microtime(TRUE)-$now)).'ms)',
 						$this->log);
