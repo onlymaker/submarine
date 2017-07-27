@@ -101,7 +101,7 @@ class Upload extends Base
                         }
                     }
                 }
-                if (count($attribute) == count($names)) {
+                if (count($attribute) == count($names) - 1) { //model not in attribute
                     $json = json_encode($attribute);
                     if ($json) {
                         $prototype['attribute'] = $json;
