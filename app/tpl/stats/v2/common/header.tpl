@@ -5,3 +5,10 @@
 <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+<script>
+    $(function () {
+        $("#cancel-btn").on('click', function () {
+            location.href = "{{$context}}/";
+        });
+    });
+</script>
