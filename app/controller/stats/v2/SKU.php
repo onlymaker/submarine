@@ -80,7 +80,6 @@ class SKU extends Base
         }
 
         $days = ceil(((strtotime($end) - strtotime($start)) / (24 * 3600)));
-        trace('days: ' . $days);
 
         $data = [];
         $chain = [];
