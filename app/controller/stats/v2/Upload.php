@@ -78,6 +78,8 @@ class Upload extends Base
             $model = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]);
             if (!empty($model)) {
                 $prototype->load(['model = ?', $model]);
+            } else {
+                $prototype->reset();
             }
             if ($prototype->dry()) {
                 $result[] = [
@@ -85,17 +87,18 @@ class Upload extends Base
                     'error' => 'model ' . $model . ' not existed'
                 ];
             } else {
-                unset($names['model']);
                 $attribute = [];
                 foreach ($names as $name => $index) {
-                    $value = strtolower(preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]));
-                    if (ProductMeta::validate($name, $value)) {
-                        $attribute[$name] = $value;
-                    } else {
-                        $result[] = [
-                            'row' => $r + 1,
-                            'error' => $model . ' ' . $name . ': ' . $value . ' is invalid'
-                        ];
+                    if ($name != 'model') {
+                        $value = strtolower(preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]));
+                        if (ProductMeta::validate($name, $value)) {
+                            $attribute[$name] = $value;
+                        } else {
+                            $result[] = [
+                                'row' => $r + 1,
+                                'error' => $model . ' ' . $name . ': ' . $value . ' is invalid'
+                            ];
+                        }
                     }
                 }
                 if (count($attribute) == count($names)) {
