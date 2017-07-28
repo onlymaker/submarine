@@ -9,7 +9,7 @@ class Customer extends Base
 {
     static $MIN_CUSTOMER_TIMES = 5;
 
-    function times($f3)
+    function purchaseFrequency($f3)
     {
         @ini_set('max_execution_time', 600);
         @ini_set('memory_limit', '128M');
