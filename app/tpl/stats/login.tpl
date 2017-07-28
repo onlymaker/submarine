@@ -40,7 +40,13 @@ body {background-color: #242424}
 <script src='http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <script>
     $(function() {
-    })
+    });
+
+    function getCookie(name) {
+        var data = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+        return !!data ? decodeURIComponent(data[2]) : '';
+    }
+
     function login() {
         var username = $('input[name=username]').val().trim();
         var password = md5($('input[name=password]').val().trim());
@@ -53,7 +59,12 @@ body {background-color: #242424}
             success: function(data) {
                 console.log('return data: ' + data);
                 if(data == 'success') {
-                    location.href = '{{$context}}/stats/Base';
+                    var url = getCookie("targetUrl");
+                    if (url) {
+                        location.href = getCookie("targetUrl");
+                    } else {
+                        location.href = "{{$context}}/";
+                    }
                 } else {
                     alert('登录失败:' + data);
                 }

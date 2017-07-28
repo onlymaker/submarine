@@ -26,6 +26,7 @@ class Base extends \controller\Base {
     function login() {
         global $f3;
         if(isset($_COOKIE['USERNAME']) && $_COOKIE['USERNAME']) return $_COOKIE['USERNAME'];
+        setcookie('targetUrl', $f3->REALM, 0, '/');
         $f3->reroute($this->url().'Login');
     }
 
