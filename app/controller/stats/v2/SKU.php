@@ -135,9 +135,9 @@ class SKU extends Base
                 if ($chain[$size] && $chain[$size][$channel] && $chain[$size][$channel]['count']) {
                     $prev = $chain[$size][$channel]['count'];
                     $current = $channelStats['count'];
-                    $channelStats['ratio'] = ($current - $prev) / $prev;
+                    $channelStats['ratio'] = sprintf('同比：%.2f', ($current - $prev) / $prev);
                 } else {
-                    $channelStats['ratio'] = '-';
+                    $channelStats['ratio'] = '';
                 }
             }
             $sizeStats['cn'] = $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
