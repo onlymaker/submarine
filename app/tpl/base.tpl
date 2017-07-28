@@ -14,14 +14,12 @@
 <body>
 <div class="container">
     <div class="list-group">
-        <a href="{{$context}}/stats" class="list-group-item" target="_blank">V1</a>
+        <li class="list-group-item active">Version 1</li>
+        <a href="{{$context}}/stats" class="list-group-item" target="_blank">View</a>
     </div>
     <div class="list-group">
-        <li class="list-group-item active">V2</li>
+        <li class="list-group-item active">Version 2</li>
         <a href="{{$context}}/stats/sku" class="list-group-item">SKU</a>
-        <a href="{{$context}}/stats/asin" class="list-group-item">ASIN</a>
-        <a href="{{$context}}/stats/product" class="list-group-item">Product</a>
-        <a href="{{$context}}/stats/profit" class="list-group-item">Profit</a>
         <a href="{{$context}}/stats/customer/purchase_frequency" class="list-group-item">Customer Purchase Frequency > 5 (within 6 months)</a>
     </div>
 </div>
