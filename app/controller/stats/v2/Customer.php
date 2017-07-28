@@ -18,7 +18,7 @@ class Customer extends Base
         if (!is_dir($dir)) {
             mkdir($dir, 0700, true);
         }
-        $csv = 'customer_times_' . date('Y-m-d') . '.csv';
+        $csv = 'customers_' . date('Y-m-d') . '.csv';
 
         header('Content-Type: octet-stream');
         header('Content-Disposition: attachment; filename="customer_times.csv"');
