@@ -25,7 +25,7 @@ class Customer extends Base
 
         $end = date('Y-m-d');
         $start = date('Y-m-d', strtotime("$end - 6 months"));
-        $sql = "SELECT name, postcode, count(*) as count FROM distribution WHERE name != '' AND postcode != '' AND create_time > ? AND create_time < ? GROUP by name, postcode ORDER BY count DESC, name";
+        $sql = "SELECT name, postcode, email, count(*) as count FROM distribution WHERE name != '' AND postcode != '' AND create_time > ? AND create_time < ? GROUP by name, postcode, email ORDER BY count DESC, name";
         $query = SqlMapper::getDbEngine()->exec($sql, [$start, $end]);
 
         $file = fopen($dir . $csv, 'a');
