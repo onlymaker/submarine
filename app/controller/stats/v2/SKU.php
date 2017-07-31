@@ -35,7 +35,7 @@ class SKU extends Base
         $prototype->load(['model = ?', $model]);
         if ($prototype->dry()) {
             $error['code'] = -1;
-            $error['message'] = 'SKU NOT FOUND';
+            $error['message'] = 'SKU [' . $model . '] NOT FOUND';
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }
@@ -49,7 +49,7 @@ class SKU extends Base
         }
         if (($end - $start) > (90 * 24 * 3600)) {
             $error['code'] = -1;
-            $error['message'] = '起始时间与终止时间间隔大于90天';
+            $error['message'] = '起始时间与终止时间不能大于90天';
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }

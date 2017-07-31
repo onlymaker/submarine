@@ -72,7 +72,7 @@ class Product extends Base
         $attribute = $_POST['attribute'];
         if (!isset(ProductMeta::$$attribute)) {
             $error['code'] = -1;
-            $error['message'] = 'ATTRIBUTE NOT FOUND';
+            $error['message'] = 'ATTRIBUTE [' . $attribute . '] NOT FOUND';
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }
@@ -86,7 +86,7 @@ class Product extends Base
         }
         if (($end - $start) > (90 * 24 * 3600)) {
             $error['code'] = -1;
-            $error['message'] = '起始时间与终止时间间隔大于90天';
+            $error['message'] = '起始时间与终止时间不能大于90天';
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }
