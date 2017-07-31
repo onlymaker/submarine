@@ -71,7 +71,7 @@ class SKU extends Base
             case 'AMUS':
                 $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA'];
                 break;
-            case 'AMEU ':
+            case 'AMEU':
                 $stores = ['AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKEU', 'AKEU-FBA'];
                 break;
             case 'ALI':
