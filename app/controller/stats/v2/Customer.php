@@ -21,7 +21,7 @@ class Customer extends Base
         $csv = 'customers_' . date('Y-m-d') . '.csv';
 
         header('Content-Type: octet-stream');
-        header('Content-Disposition: attachment; filename="customer_times.csv"');
+        header('Content-Disposition: attachment; filename="' . $csv . '"');
 
         $end = date('Y-m-d');
         $start = date('Y-m-d', strtotime("$end - 6 months"));
