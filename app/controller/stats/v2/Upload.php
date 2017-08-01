@@ -148,16 +148,26 @@ class Upload extends Base
                     $tmp[$name] = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]);
                 }
                 $tmp['store'] = strtoupper($tmp['store']);
-                $asin->load(['model = ? AND parent_asin = ? AND store = ?', $tmp['model'], $tmp['parent_asin'], $tmp['store']]);
+                //parent_asin and store check
+                $asin->load(['parent_asin = ? AND store != ?', $tmp['parent_asin'], $tmp['store']]);
                 if ($asin->dry()) {
-                    foreach ($tmp as $key => $value) {
-                        $asin[$key] = $value;
+                    //sku, parent_asin, store should be unique
+                    $asin->load(['model = ? AND parent_asin = ? AND store = ?', $tmp['model'], $tmp['parent_asin'], $tmp['store']]);
+                    if ($asin->dry()) {
+                        foreach ($tmp as $key => $value) {
+                            $asin[$key] = $value;
+                        }
+                        $asin->save();
+                    } else {
+                        $result[] = [
+                            'row' => $r + 1,
+                            'error' => 'current row already existed'
+                        ];
                     }
-                    $asin->save();
                 } else {
                     $result[] = [
                         'row' => $r + 1,
-                        'error' => 'current row already existed'
+                        'error' => sprintf('%s:%s conflict with previous data %s:%s', $tmp['parent_asin'], $tmp['store'], $asin['parent_asin'], $asin['store'])
                     ];
                 }
             }
