@@ -57,6 +57,10 @@ class ASIN extends Base
         $db = SqlMapper::getDbEngine();
         $asin = new Mapper($db, 'asin');
         $models = $asin->find(['parent_asin = ?', $parentAsin]);
-        echo json_encode(\Matrix::instance()->pick($models, 'model'));
+        \Matrix::instance()->transpose($models);
+        unset($models['id']);
+        unset($models['parent_asin']);
+        unset($models['child_asin']);
+        echo json_encode($models);
     }
 }
