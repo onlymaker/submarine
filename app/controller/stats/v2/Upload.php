@@ -146,17 +146,17 @@ class Upload extends Base
                     $tmp[$name] = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]);
                 }
                 $tmp['store'] = strtoupper($tmp['store']);
-                $asin->load(['model = ? AND parent_asin = ? AND child_asin = ?', $tmp['model'], $tmp['parent_asin'], $tmp['child_asin']]);
+                $asin->load(['model = ? AND parent_asin = ? AND store = ?', $tmp['model'], $tmp['parent_asin'], $tmp['store']]);
                 if ($asin->dry()) {
                     foreach ($tmp as $key => $value) {
                         $asin[$key] = $value;
                     }
                     $asin->save();
                 } else {
-                    if ($asin['store'] != $tmp['store']) {
-                        $asin['store'] = $tmp['store'];
-                        $asin->save();
-                    }
+                    $result[] = [
+                        'row' => $r + 1,
+                        'error' => 'current row already existed'
+                    ];
                 }
             }
         }
