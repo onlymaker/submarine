@@ -131,7 +131,7 @@ class Upload extends Base
         $result = [];
         $names = array_flip(self::$fields['product-asin']);
         foreach ($data as $r => $row) {
-            $model = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]);
+            $model = strtoupper(preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]));
             if (!empty($model)) {
                 $prototype->load(['model = ?', $model]);
             }
@@ -145,6 +145,7 @@ class Upload extends Base
                 foreach ($names as $name => $index) {
                     $tmp[$name] = preg_replace(['/^\s*/', '/\s*$/'], '', $row[$index]);
                 }
+                $tmp['store'] = strtoupper($tmp['store']);
                 $asin->load(['model = ? AND parent_asin = ? AND child_asin = ?', $tmp['model'], $tmp['parent_asin'], $tmp['child_asin']]);
                 if ($asin->dry()) {
                     foreach ($tmp as $key => $value) {
