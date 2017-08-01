@@ -20,6 +20,9 @@
     <div class="list-group">
         <li class="list-group-item active">Version 2</li>
         <a href="{{$context}}/stats/sku" class="list-group-item">SKU</a>
+        <a href="{{$context}}/stats/asin" class="list-group-item">ASIN</a>
+        <a href="{{$context}}/stats/product" class="list-group-item">Product</a>
+        <a href="{{$context}}/stats/profit" class="list-group-item">Profit</a>
     </div>
 </div>
 <script>

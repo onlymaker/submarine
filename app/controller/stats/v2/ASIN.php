@@ -13,6 +13,10 @@ class ASIN extends Base
         global $smarty;
         $smarty->assign('title', 'ASIN - stats');
         if ($f3->VERB == 'POST') {
+            $parentAsin = strtoupper(preg_replace(['/^\s*/', '/\s*$/'], '', $_POST['asin']));
+            $start = $_POST['start-date'];
+            $end = $_POST['end-date'];
+            $this->query($parentAsin, $start, $end);
         } else {
             $smarty->display('stats/v2/asin.tpl');
         }
@@ -46,5 +50,13 @@ class ASIN extends Base
             return;
         }
         echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
+    }
+
+    function query($parentAsin, $start, $end)
+    {
+        $db = SqlMapper::getDbEngine();
+        $asin = new Mapper($db, 'asin');
+        $models = $asin->find(['parent_asin = ?', $parentAsin]);
+        echo json_encode(\Matrix::instance()->pick($models, 'model'));
     }
 }
