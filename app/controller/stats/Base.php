@@ -10,6 +10,8 @@ namespace controller\stats;
 
 class Base extends \controller\Base {
     protected $user;
+    protected $maxStatsDays = 90;
+    protected $maxStatsSeconds = 7776000;
 
     function beforeRoute() {
         global $f3, $smarty;
@@ -22,7 +24,7 @@ class Base extends \controller\Base {
         global $f3;
         $f3->reroute($this->url().'Index');
     }
-    
+
     function login() {
         global $f3;
         if(isset($_COOKIE['USERNAME']) && $_COOKIE['USERNAME']) return $_COOKIE['USERNAME'];
@@ -34,4 +36,4 @@ class Base extends \controller\Base {
         global $f3;
         return $f3->get('SCHEME').'://'.$f3->get('HOST').':'.$f3->get('PORT').$f3->get('BASE').'/stats/';
     }
-} 
+}

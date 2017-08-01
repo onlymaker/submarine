@@ -47,9 +47,9 @@ class SKU extends Base
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }
-        if (($end - $start) > (90 * 24 * 3600)) {
+        if (($end - $start) > $this->maxStatsSeconds) {
             $error['code'] = -1;
-            $error['message'] = '起始时间与终止时间不能大于90天';
+            $error['message'] = "起始时间与终止时间不能大于 $this->maxStatsDays 天";
             echo json_encode(['error' => $error], JSON_UNESCAPED_UNICODE);
             return;
         }
