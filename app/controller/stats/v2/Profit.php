@@ -35,8 +35,8 @@ class Profit extends Base
                             'channel' => $item['channel'],
                             'averagePrice' => $item['price'] / $item['count'],
                             'averageProfit' =>  $item['profit'] / $item['count'],
-                            'costRatio' => sprintf('%.2f', $item['cost'] / ($item['price'] ?? $item['cost'])),
-                            'expressRatio' => sprintf('%.2f', $item['express'] / ($item['price'] ?? $item['express'])),
+                            'costRatio' => (int)$item['cost'] ? sprintf('%.2f', $item['cost'] / ($item['price'] ?? $item['cost'])) : '-',
+                            'expressRatio' => (int)$item['express'] ? sprintf('%.2f', $item['express'] / ($item['price'] ?? $item['express'])) : '-',
                             'count' => $item['count'],
                             'return' => 0
                         ];
