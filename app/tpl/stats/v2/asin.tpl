@@ -15,16 +15,6 @@
             <input name="asin" class="form-control"/>
         </div>
         <div class="form-group">
-            <label>Market</label>
-            <select name="market" class="form-control">
-                <option></option>
-                <option value="amus">AMUS</option>
-                <option value="ameu">AMEU</option>
-                <option value="ali">ALI</option>
-                <option value="all">ALL</option>
-            </select>
-        </div>
-        <div class="form-group">
             <label>Start Date</label>
             <input name="start-date" class="form-control" placeholder="xxxx-xx-xx"/>
         </div>
@@ -46,10 +36,6 @@
             if (!asin) {
                 return alert("asin 不能为空");
             }
-            var market = $("select[name=market]").children("option:selected").val();
-            if (!market) {
-                return alert("market 不能为空");
-            }
             var start = $("input[name=start-date]").val().trim();
             var end = $("input[name=end-date]").val().trim();
             var reg = /^\d{4}-\d{2}-\d{2}$/;
@@ -59,7 +45,6 @@
             submitBtn.attr("disabled", true).append("<i class='fa fa-spinner fa-spin'></i>");
             $.post("{{$context}}/stats/asin/validate", {
                 'asin': asin,
-                'market': market,
                 'start': start,
                 'end': end
             })
