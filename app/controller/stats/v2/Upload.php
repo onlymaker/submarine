@@ -134,6 +134,8 @@ class Upload extends Base
             $model = strtoupper(preg_replace(['/^\s*/', '/\s*$/'], '', $row[$names['model']]));
             if (!empty($model)) {
                 $prototype->load(['model = ?', $model]);
+            } else {
+                $prototype->reset();
             }
             if ($prototype->dry()) {
                 $result[] = [
