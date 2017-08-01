@@ -58,9 +58,10 @@ class ASIN extends Base
         $days = ceil(((strtotime($end) - strtotime($start)) / (24 * 3600)));
         $chainStart = date('Y-m-d H:i:s', strtotime("$start - $days days"));
         $chainEnd = date('Y-m-d H:i:s', strtotime("$end - $days days"));
+
         $db = SqlMapper::getDbEngine();
         $asin = new Mapper($db, 'asin');
-        $models = $asin->find(['parent_asin = ?', $parentAsin]);
+        $models = $asin->find(['parent_asin = ?', $parentAsin], ['order' => 'model']);
         $channel = $models[0]['store'];
         $fbaChannel = $channel . '-FBA';
 
@@ -87,6 +88,12 @@ class ASIN extends Base
         $modelOptions = "'" . $modelOptions . "'";
         $sizes = $db->exec('SELECT DISTINCT(size) as size FROM order_item o, prototype p WHERE p.model in (' . $modelOptions . ') AND o.prototype_id = p.ID AND o.channel in (?, ?) ORDER BY 1', [$channel, $fbaChannel]);
         $sizes = \Matrix::instance()->pick($sizes, 'size');
+        $flipSizes = array_flip($sizes);
+        foreach ($flipSizes as $key => &$value) {
+            $value = preg_replace('/^\D*/', '', $key);
+        }
+        $sizes = array_flip($flipSizes);
+        ksort($sizes);
 
         $sizeStats = [];
         foreach ($sizes as $size) {
