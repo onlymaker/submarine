@@ -86,7 +86,7 @@ class ASIN extends Base
 
         $modelOptions = implode("','", \Matrix::instance()->pick($models, 'model'));
         $modelOptions = "'" . $modelOptions . "'";
-        $sizes = $db->exec('SELECT DISTINCT(size) as size FROM order_item o, prototype p WHERE p.model in (' . $modelOptions . ') AND o.prototype_id = p.ID AND o.channel in (?, ?) ORDER BY 1', [$channel, $fbaChannel]);
+        $sizes = $db->exec('SELECT DISTINCT(size) as size FROM order_item o, prototype p WHERE p.model in (' . $modelOptions . ') AND o.prototype_id = p.ID AND o.channel in (?, ?) AND o.create_time > ? AND o.create_time < ? ORDER BY 1', [$channel, $fbaChannel, $start, $end]);
         $sizes = \Matrix::instance()->pick($sizes, 'size');
         $flipSizes = array_flip($sizes);
         foreach ($flipSizes as $key => &$value) {
