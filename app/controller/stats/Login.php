@@ -21,7 +21,7 @@ class Login extends Base {
         $username = $_POST['username'];
         $password = $_POST['password'];
         $authorizedKeys = $f3->get('AUTHORIZED_KEYS');
-        if(in_array(md5($username.$password), $authorizedKeys)) {
+        if ((is_array($authorizedKeys) && in_array(md5($username.$password), $authorizedKeys)) || (is_string($authorizedKeys) && md5($username.$password) == $authorizedKeys)) {
             setcookie('USERNAME', $username);
             $check = true;
         }
