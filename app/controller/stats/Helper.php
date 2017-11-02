@@ -19,8 +19,11 @@ class Helper {
             'prototype' => 'p',
         );
 
-        if($t == 'shoe') $manufactory = 'p.manufactory!=\'小商品\'';
-        else $manufactory = 'p.manufactory=\'小商品\'';
+        if($t == 'shoe') {
+            $manufactory = 'p.manufactory NOT IN (\'拖鞋\',\'小商品\',\'服装\',\'包\')';
+        } else {
+            $manufactory = 'p.manufactory IN (\'小商品\',\'服装\',\'包\')';
+        }
 
         $year = $y;
 
