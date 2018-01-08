@@ -69,10 +69,10 @@ class SKU extends Base
 
         switch ($market) {
             case 'AMUS':
-                $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA'];
+                $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA'];
                 break;
             case 'AMEU':
-                $stores = ['AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKEU', 'AKEU-FBA'];
+                $stores = ['AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKUK-FBA', 'AKEU', 'AKEU-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
                 break;
             case 'ALI':
                 $stores = ['ALI', 'ALI-FBA'];
