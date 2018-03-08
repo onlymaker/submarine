@@ -19,7 +19,8 @@
             <select name="market" class="form-control">
                 <option></option>
                 <option value="amus">AMUS</option>
-                <option value="ameu">AMEU</option>
+                <option value="amuk">AMUK</option>
+                <option value="amde">AMDE</option>
                 <option value="ali">ALI</option>
                 <option value="all">ALL</option>
             </select>
