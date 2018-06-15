@@ -8,6 +8,9 @@ use db\SqlMapper;
 
 class SKU extends Base
 {
+    private static $SIZE_US = ['US5', 'US6', 'US7', 'US8', 'US9', 'US9.5', 'US10', 'US11', 'US12', 'US13', 'US14', 'US15'];
+    private static $SIZE_DE = [];
+
     function stats($f3)
     {
         global $smarty;
@@ -89,9 +92,9 @@ class SKU extends Base
 
         $data = [];
         $chain = [];
+        $soldSize = [];
         if (isset($stores)) {
             $channelFilter = " in ('" . implode("','", $stores) . "')";
-
             //data query
             $sql = sprintf('SELECT channel, size, count(*) as count FROM order_item WHERE prototype_id = %d AND create_time > ? AND create_time < ? AND channel %s GROUP by channel, size', $prototype['ID'], $channelFilter);
             $query = $db->exec($sql, [$start, $end]);
@@ -103,7 +106,7 @@ class SKU extends Base
                     $data[$size][$item['channel']] = ['count' => $item['count']];
                 }
             }
-
+            $soldSize = array_column($query, 'size');
             //chain query
             $start = date('Y-m-d H:i:s', strtotime("$start - $days days"));
             $end = date('Y-m-d H:i:s', strtotime("$end - $days days"));
@@ -125,7 +128,7 @@ class SKU extends Base
             foreach ($query as $item) {
                 $data[$item['size']] = [$market => ['count' => $item['count']]];
             }
-
+            $soldSize = array_column($query, 'size');
             //chain query
             $start = date('Y-m-d H:i:s', strtotime("$start - $days days"));
             $end = date('Y-m-d H:i:s', strtotime("$end - $days days"));
@@ -150,8 +153,24 @@ class SKU extends Base
             $sizeStats['us'] = $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['de'] = $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
         }
+        $unsoldSize = array_diff(self::$SIZE_US, $soldSize);
+        foreach ($unsoldSize as $size) {
+            $data[$size] = [
+                'cn' => $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
+                'us' => $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
+                'de' => $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
+            ];
+        }
         trace($db->log());
-        ksort($data);
+        uksort($data, function ($a, $b) {
+            $a = substr($a, 2);
+            $b = substr($b, 2);
+            if ($a == $b) {
+                return 0;
+            } else {
+                return $a < $b ? -1 : 1;
+            }
+        });
         return [
             'head' => array_merge($params, ['stores' => $stores]),
             'body' => $data
