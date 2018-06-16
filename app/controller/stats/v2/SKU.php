@@ -9,7 +9,8 @@ use db\SqlMapper;
 class SKU extends Base
 {
     private static $SIZE_US = ['US5', 'US6', 'US7', 'US8', 'US9', 'US9.5', 'US10', 'US11', 'US12', 'US13', 'US14', 'US15'];
-    private static $SIZE_DE = [];
+    private static $SIZE_UK = ['UK2', 'UK3', 'UK4', 'UK5', 'UK6', 'UK7', 'UK8', 'UK9', 'UK10', 'UK11', 'UK12', 'UK13'];
+    private static $SIZE_DE = ['EU35', 'EU36', 'EU37', 'EU38', 'EU39', 'EU40', 'EU41', 'EU42', 'EU43', 'EU44', 'EU45', 'EU46'];
 
     function stats($f3)
     {
@@ -73,19 +74,25 @@ class SKU extends Base
         switch ($market) {
             case 'AMUS':
                 $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA'];
+                $allSize = self::$SIZE_US;
                 break;
             /*case 'AMEU':
                 $stores = ['AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKUK-FBA', 'AKEU', 'AKEU-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
                 break;*/
             case 'AMUK':
                 $stores = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
+                $allSize = self::$SIZE_UK;
                 break;
             case 'AMDE':
                 $stores = ['AODE', 'AODE-FBA', 'AKEU', 'AKDE-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
+                $allSize = self::$SIZE_DE;
                 break;
             case 'ALI':
                 $stores = ['ALI', 'ALI-FBA'];
+                $allSize = self::$SIZE_US;
                 break;
+            default:
+                $allSize = array_merge(self::$SIZE_US, self::$SIZE_UK, self::$SIZE_DE);
         }
 
         $days = ceil(((strtotime($end) - strtotime($start)) / (24 * 3600)));
@@ -153,7 +160,7 @@ class SKU extends Base
             $sizeStats['us'] = $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['de'] = $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
         }
-        $unsoldSize = array_diff(self::$SIZE_US, $soldSize);
+        $unsoldSize = array_diff($allSize, $soldSize);
         foreach ($unsoldSize as $size) {
             $data[$size] = [
                 'cn' => $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
@@ -163,12 +170,18 @@ class SKU extends Base
         }
         trace($db->log());
         uksort($data, function ($a, $b) {
-            $a = substr($a, 2);
-            $b = substr($b, 2);
-            if ($a == $b) {
-                return 0;
+            $c1 = substr($a, 0, 2);
+            $c2 = substr($b, 0, 2);
+            if ($c1 == $c2) {
+                $s1 = substr($a, 2);
+                $s2 = substr($b, 2);
+                if ($s1 == $s2) {
+                    return 0;
+                } else {
+                    return $s1 < $s2 ? -1 : 1;
+                }
             } else {
-                return $a < $b ? -1 : 1;
+                return $c1 < $c2 ? -1 : 1;
             }
         });
         return [
