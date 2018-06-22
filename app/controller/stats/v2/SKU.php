@@ -159,6 +159,7 @@ class SKU extends Base
             $sizeStats['cn'] = $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['us'] = $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['de'] = $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
+            $sizeStats['uk'] = $stock->count(["prototype_id =? AND location = '英国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
         }
         $unsoldSize = array_diff($allSize, $soldSize);
         foreach ($unsoldSize as $size) {

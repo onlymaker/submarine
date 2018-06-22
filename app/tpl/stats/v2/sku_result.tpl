@@ -14,7 +14,7 @@
         {{foreach $data['head']['stores'] as $store}}
             <th>{{$store}}</th>
         {{/foreach}}
-        <th>中国</th><th>美国</th><th>德国</th>
+        <th>中国</th><th>美国</th><th>德国</th><th>英国</th>
         {{foreach $data['body'] as $size => $sizeStats}}
             <tr>
                 <td>{{$size}}</td>
@@ -25,7 +25,7 @@
                         {{/if}}
                     </td>
                 {{/foreach}}
-                <td>{{$sizeStats['cn']}}</td><td>{{$sizeStats['us']}}</td><td>{{$sizeStats['de']}}</td>
+                <td>{{$sizeStats['cn']}}</td><td>{{$sizeStats['us']}}</td><td>{{$sizeStats['de']}}</td><td>{{$sizeStats['uk']}}</td>
             </tr>
         {{/foreach}}
     </table>
