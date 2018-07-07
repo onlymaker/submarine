@@ -78,9 +78,9 @@ class ASIN extends Base
             list($fbaChainResult) = $db->exec($sql);
             $skuStats[$sku] = [
                 'count' => $result['count'],
-                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f', ($result['count'] - $chainResult['count']) / $chainResult['count']) : '-',
+                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
                 'fbaCount' => $fbaResult['count'],
-                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count']) : '-'
+                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-'
             ];
         }
 
@@ -107,9 +107,9 @@ class ASIN extends Base
             list($fbaChainResult) = $db->exec($sql);
             $sizeStats[$size] = [
                 'count' => $result['count'],
-                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f', ($result['count'] - $chainResult['count']) / $chainResult['count']) : '-',
+                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
                 'fbaCount' => $fbaResult['count'],
-                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count']) : '-'
+                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-'
             ];
         }
 
