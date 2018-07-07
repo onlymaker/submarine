@@ -22,12 +22,22 @@
         <input id="upload-file" class="form-control" type="file" name="file"/>
     </div>
     <div class="btn-group">
+        <button id="download-btn" class="btn btn-success">模板</button>
         <button id="cancel-btn" class="btn btn-default">取消</button>
         <button id="upload-btn" class="btn btn-primary">上传</button>
     </div>
 </div>
 <script>
     $(function () {
+        var downloadBtn = $("#download-btn");
+        downloadBtn.click(function () {
+            var type = $("#upload-type").children("option:selected").val();
+            if (!type) {
+                alert("尚未选择文件类型");
+                return false;
+            }
+            window.open("{{$context}}/stats/template?type=" + type);
+        });
         var uploadBtn = $("#upload-btn");
         uploadBtn.click(function () {
             var type = $("#upload-type").children("option:selected").val();

@@ -178,4 +178,23 @@ class Upload extends Base
             'result' => $result
         ];
     }
+
+    function template($f3) {
+        $dir = $f3->TEMP . 'downloads/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0700, true);
+        }
+        $type = $_GET['type'];
+        $template = 'template_' . $type . '.xls';
+        if (!is_file($template)) {
+            $excel = new \PHPExcel();
+            $excel->setActiveSheetIndex(0);
+            $excel->getActiveSheet()->fromArray(self::$fields[$type], '', 'A1');
+            $writer = new \PHPExcel_Writer_Excel5($excel);
+            $writer->save($dir . $template);
+        }
+        header('Content-Type: octet-stream');
+        header('Content-Disposition: attachment; filename="' . $template . '"');
+        echo file_get_contents($dir . $template);
+    }
 }
