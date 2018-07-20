@@ -15,7 +15,7 @@ class ASIN extends Base
         if ($f3->VERB == 'POST') {
             $parentAsin = strtoupper(preg_replace(['/^\s*/', '/\s*$/'], '', $_POST['asin']));
             $start = $_POST['start-date'];
-            $end = $_POST['end-date'];
+            $end = $_POST['end-date'] . ' 23:59:59';
             $smarty->assign('data', $this->query($parentAsin, $start, $end));
             $smarty->display('stats/v2/asin_result.tpl');
         } else {
@@ -122,7 +122,7 @@ class ASIN extends Base
                 'channel' => $channel,
                 'fbaChannel' => $fbaChannel,
                 'start' => $start,
-                'end' => $end
+                'end' => substr($end, 0, 10)
             ],
             'sku' => $skuStats,
             'size' => $sizeStats
