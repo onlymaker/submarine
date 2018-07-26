@@ -76,15 +76,12 @@ class SKU extends Base
                 $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA'];
                 $allSize = self::$SIZE_US;
                 break;
-            /*case 'AMEU':
-                $stores = ['AOUK', 'AODE', 'AODE-FBA', 'AKUK', 'AKUK-FBA', 'AKEU', 'AKEU-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
-                break;*/
             case 'AMUK':
                 $stores = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
                 $allSize = self::$SIZE_UK;
                 break;
             case 'AMDE':
-                $stores = ['AODE', 'AODE-FBA', 'AKEU', 'AKDE-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
+                $stores = ['AODE', 'AODE-FBA', 'AKEU', 'AKDE', 'AKDE-FBA', 'ASUK', 'ASDE', 'ASDE-FBA'];
                 $allSize = self::$SIZE_DE;
                 break;
             case 'ALI':
