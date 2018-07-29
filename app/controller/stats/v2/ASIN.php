@@ -78,12 +78,21 @@ class ASIN extends Base
             list($fbaChainResult) = $db->exec($sql);
             $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='中国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
             list($stockInChina) = $db->exec($sql);
+            $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='美国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
+            list($stockInAmerica) = $db->exec($sql);
+            $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='德国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
+            list($stockInGerman) = $db->exec($sql);
+            $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='英国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
+            list($stockInEngland) = $db->exec($sql);
             $skuStats[$sku] = [
                 'count' => $result['count'],
                 'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
                 'fbaCount' => $fbaResult['count'],
                 'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-',
-                'china' => $stockInChina['count']
+                'china' => $stockInChina['count'],
+                'america' => $stockInAmerica['count'],
+                'german' => $stockInGerman['count'],
+                'england' => $stockInEngland['count']
             ];
         }
 
