@@ -8,7 +8,7 @@
     ],
     "license": "Unlicense",
     "require": {
-        "bcosca/fatfree-core": "3.6.2",
+        "bcosca/fatfree-core": "3.6.4",
         "php-amqplib/php-amqplib": "2.6.3",
         "phpoffice/phpexcel": "1.8.1",
         "qiniu/php-sdk": "7.1.3",
