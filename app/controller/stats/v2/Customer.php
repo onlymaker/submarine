@@ -11,8 +11,8 @@ class Customer extends Base
 
     function purchaseFrequency($f3)
     {
-        @ini_set('max_execution_time', 600);
-        @ini_set('memory_limit', '128M');
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '128M');
 
         $dir = $f3->TEMP . 'downloads/';
         if (!is_dir($dir)) {

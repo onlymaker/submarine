@@ -55,6 +55,7 @@ class ASIN extends Base
 
     function query($parentAsin, $start, $end)
     {
+        ini_set('max_execution_time', 600);
         $days = ceil(((strtotime($end) - strtotime($start)) / (24 * 3600)));
         $chainStart = date('Y-m-d H:i:s', strtotime("$start - $days days"));
         $chainEnd = date('Y-m-d H:i:s', strtotime("$end - $days days"));
@@ -62,38 +63,46 @@ class ASIN extends Base
         $db = SqlMapper::getDbEngine();
         $asin = new Mapper($db, 'asin');
         $models = $asin->find(['parent_asin = ?', $parentAsin], ['order' => 'model']);
-        $channel = $models[0]['store'];
-        $fbaChannel = $channel . '-FBA';
+        $channels = array_unique(array_column($models, 'store'));
 
         $skuStats = [];
         foreach ($models as $model) {
             $sku = $model['model'];
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $channel, $start, $end);
-            list($result) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $channel, $chainStart, $chainEnd);
-            list($chainResult) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $fbaChannel, $start, $end);
-            list($fbaResult) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $fbaChannel, $chainStart, $chainEnd);
-            list($fbaChainResult) = $db->exec($sql);
+            $skuStats[$sku] = ['channel'];
+            $skuStats[$sku]['channel'] = [];
+            foreach ($channels as $channel) {
+                $fbaChannel = $channel . '-FBA';
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $channel, $start, $end);
+                list($result) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $channel, $chainStart, $chainEnd);
+                list($chainResult) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $fbaChannel, $start, $end);
+                list($fbaResult) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model = '%s' AND p.ID = o.prototype_id AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $sku, $fbaChannel, $chainStart, $chainEnd);
+                list($fbaChainResult) = $db->exec($sql);
+                $skuStats[$sku]['channel'][$channel] = [
+                    'count' => $result['count'],
+                    'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
+                    'fbaCount' => $fbaResult['count'],
+                    'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-',
+                ];
+            }
+
             $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='中国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
             list($stockInChina) = $db->exec($sql);
+            $skuStats[$sku]['china'] = $stockInChina['count'];
+
             $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='美国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
             list($stockInAmerica) = $db->exec($sql);
+            $skuStats[$sku]['america'] = $stockInAmerica['count'];
+
             $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='德国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
             list($stockInGerman) = $db->exec($sql);
+            $skuStats[$sku]['german'] = $stockInGerman['count'];
+
             $sql = sprintf("SELECT count(*) as count FROM stock s, prototype p WHERE s.location='英国' AND s.prototype_id=p.ID AND p.model='%s'", $sku);
             list($stockInEngland) = $db->exec($sql);
-            $skuStats[$sku] = [
-                'count' => $result['count'],
-                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
-                'fbaCount' => $fbaResult['count'],
-                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-',
-                'china' => $stockInChina['count'],
-                'america' => $stockInAmerica['count'],
-                'german' => $stockInGerman['count'],
-                'england' => $stockInEngland['count']
-            ];
+            $skuStats[$sku]['england'] = $stockInEngland['count'];
         }
 
         $modelOptions = implode("','", \Matrix::instance()->pick($models, 'model'));
@@ -109,27 +118,30 @@ class ASIN extends Base
 
         $sizeStats = [];
         foreach ($sizes as $size) {
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $channel, $start, $end);
-            list($result) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $channel, $chainStart, $chainEnd);
-            list($chainResult) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $fbaChannel, $start, $end);
-            list($fbaResult) = $db->exec($sql);
-            $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $fbaChannel, $chainStart, $chainEnd);
-            list($fbaChainResult) = $db->exec($sql);
-            $sizeStats[$size] = [
-                'count' => $result['count'],
-                'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
-                'fbaCount' => $fbaResult['count'],
-                'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-'
-            ];
+            $sizeStats[$size] = ['channel'];
+            $sizeStats[$size]['channel'] = [];
+            foreach ($channels as $channel) {
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $channel, $start, $end);
+                list($result) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $channel, $chainStart, $chainEnd);
+                list($chainResult) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $fbaChannel, $start, $end);
+                list($fbaResult) = $db->exec($sql);
+                $sql = sprintf("SELECT count(*) as count FROM order_item o, prototype p WHERE p.model in (%s) AND p.ID = o.prototype_id AND (o.size = '%s' OR o.size LIKE '%s=%%' OR o.size LIKE '%%=%s') AND o.channel = '%s' AND o.create_time > '%s' AND o.create_time < '%s'", $modelOptions, $size, $size, $size, $fbaChannel, $chainStart, $chainEnd);
+                list($fbaChainResult) = $db->exec($sql);
+                $sizeStats[$size]['channel'][$channel] = [
+                    'count' => $result['count'],
+                    'ratio' => $result['count'] && $chainResult['count'] ? sprintf('%.2f%%', ($result['count'] - $chainResult['count']) / $chainResult['count'] * 100) : '-',
+                    'fbaCount' => $fbaResult['count'],
+                    'fbaRatio' => $fbaResult['count'] && $fbaChainResult['count'] ? sprintf('%.2f%%', ($fbaResult['count'] - $fbaChainResult['count']) / $fbaChainResult['count'] * 100) : '-'
+                ];
+            }
         }
 
         return [
             'head' => [
                 'asin' => $parentAsin,
-                'channel' => $channel,
-                'fbaChannel' => $fbaChannel,
+                'channels' => $channels,
                 'start' => $start,
                 'end' => substr($end, 0, 10)
             ],
