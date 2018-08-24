@@ -21,7 +21,7 @@
 */
 
 //! Custom logger
-class Log {
+class Log extends Prefab {
 
 	protected
 		//! File name

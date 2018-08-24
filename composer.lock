@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/syncxplus/fatfree.git",
-                "reference": "7106cb910415cc5eb5b19b4b59573a663897791b"
+                "reference": "3f1bea7c45d985ff5b355b9d73f4a2066a8fee20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/syncxplus/fatfree/zipball/7106cb910415cc5eb5b19b4b59573a663897791b",
-                "reference": "7106cb910415cc5eb5b19b4b59573a663897791b",
+                "url": "https://api.github.com/repos/syncxplus/fatfree/zipball/3f1bea7c45d985ff5b355b9d73f4a2066a8fee20",
+                "reference": "3f1bea7c45d985ff5b355b9d73f4a2066a8fee20",
                 "shasum": ""
             },
             "require": {
@@ -37,7 +37,7 @@
             "support": {
                 "source": "https://github.com/syncxplus/fatfree/tree/3.6.4-syncxplus"
             },
-            "time": "2018-08-24T05:27:10+00:00"
+            "time": "2018-08-24T05:55:02+00:00"
         },
         {
             "name": "php-amqplib/php-amqplib",

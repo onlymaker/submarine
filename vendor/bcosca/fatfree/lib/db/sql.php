@@ -268,7 +268,7 @@ class SQL {
 		if ($this->trans && $auto)
 			$this->commit();
 		if ($fw->DEBUG) {
-			(new \Log(date('Y-m-d.\s\q\l')))->write($this->log);
+			\Log::instance(date('Y-m-d.\s\q\l'))->write($this->log);
 			$this->log='';
 		}
 		return $result;
