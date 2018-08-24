@@ -267,7 +267,10 @@ class SQL {
 		}
 		if ($this->trans && $auto)
 			$this->commit();
-		if ($fw->SHOW_SQL && function_exists('trace')) trace($this->log);
+		if ($fw->DEBUG) {
+			(new \Log(date('Y-m-d.\s\q\l')))->write($this->log);
+			$this->log='';
+		}
 		return $result;
 	}
 
