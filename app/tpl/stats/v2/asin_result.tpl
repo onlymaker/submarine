@@ -37,8 +37,9 @@
         {{foreach $data['size'] as $name => $stats}}
             <tr>
                 <td>{{$name}}</td>
-                <td>{{$stats['count']}}</td><td>{{$stats['ratio']}}</td>
-                <td>{{$stats['fbaCount']}}</td><td>{{$stats['fbaRatio']}}</td>
+                {{foreach $stats['channel'] as $channel}}
+                <td>{{$channel['count']}}</td><td>{{$channel['ratio']}}</td><td>{{$channel['fbaCount']}}</td><td>{{$channel['fbaRatio']}}</td>
+                {{/foreach}}
             </tr>
         {{/foreach}}
     </table>
