@@ -6,6 +6,8 @@ use code\ProductMeta;
 use controller\stats\Base;
 use DB\SQL\Mapper;
 use db\SqlMapper;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Upload extends Base
 {
@@ -177,16 +179,14 @@ class Upload extends Base
             mkdir($dir, 0700, true);
         }
         $type = $_GET['type'];
-        $template = 'template_' . $type . '.xls';
+        $template = $dir . 'template_' . $type . '.xlsx';
         if (!is_file($template)) {
-            $excel = new \PHPExcel();
-            $excel->setActiveSheetIndex(0);
-            $excel->getActiveSheet()->fromArray(self::$fields[$type], '', 'A1');
-            $writer = new \PHPExcel_Writer_Excel5($excel);
-            $writer->save($dir . $template);
+            $spreadsheet = new SpreadSheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->fromArray(self::$fields[$type], '', 'A1');
+            $writer = new Xlsx($spreadsheet);
+            $writer->save($template);
         }
-        header('Content-Type: octet-stream');
-        header('Content-Disposition: attachment; filename="' . $template . '"');
-        echo file_get_contents($dir . $template);
+        \Web::instance()->send($template);
     }
 }
