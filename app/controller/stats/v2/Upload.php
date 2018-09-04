@@ -6,6 +6,7 @@ use code\ProductMeta;
 use controller\stats\Base;
 use DB\SQL\Mapper;
 use db\SqlMapper;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -46,7 +47,7 @@ class Upload extends Base
         try {
             ini_set('max_execution_time', 600);
             ini_set('memory_limit', '256M');
-            $excel = \PHPExcel_IOFactory::load($file);
+            $excel = IOFactory::load($file);
             $sheet = $excel->getSheet(0);
             $rows = $sheet->toArray();
             switch ($type) {
