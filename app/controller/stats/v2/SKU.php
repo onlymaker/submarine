@@ -73,7 +73,7 @@ class SKU extends Base
 
         switch ($market) {
             case 'AMUS':
-                $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA'];
+                $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA'];
                 $allSize = self::$SIZE_US;
                 break;
             case 'AMUK':
@@ -81,7 +81,7 @@ class SKU extends Base
                 $allSize = self::$SIZE_UK;
                 break;
             case 'AMDE':
-                $stores = ['AODE', 'AODE-FBA', 'AKEU', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA'];
+                $stores = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA'];
                 $allSize = self::$SIZE_DE;
                 break;
             case 'ALI':
