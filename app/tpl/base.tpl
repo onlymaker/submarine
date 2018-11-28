@@ -9,6 +9,17 @@
         .container {
             margin-top: 25px;
         }
+        .sku-stats, .sku-download {
+            cursor: pointer;
+        }
+        .sku-download {
+            float: right;
+            background-color: darkgray;
+            color: white;
+            padding-left: 3px;
+            padding-right: 3px;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -19,7 +30,7 @@
     </div>
     <div class="list-group">
         <li class="list-group-item active">Version 2</li>
-        <a href="{{$context}}/stats/sku" class="list-group-item">SKU</a>
+        <li class="list-group-item sku-stats">SKU<span class="sku-download">下载</span></li>
         <a href="{{$context}}/stats/asin" class="list-group-item">ASIN</a>
         <a href="{{$context}}/stats/product" class="list-group-item">Product</a>
         <a href="{{$context}}/stats/profit" class="list-group-item">Profit</a>
@@ -27,6 +38,15 @@
 </div>
 <script>
     $(function () {
+        $(".sku-stats").on("click", function () {
+            console.log("sku-stats");
+            location.href = "{{$context}}/stats/sku";
+        });
+        $(".sku-download").on("click", function (e) {
+            console.log("sku-download");
+            e.stopPropagation();
+            window.open("{{$context}}/stats/sku/download");
+        })
     })
 </script>
 </body>

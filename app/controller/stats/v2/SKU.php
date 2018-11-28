@@ -11,6 +11,9 @@ class SKU extends Base
     private static $SIZE_US = ['US5', 'US6', 'US7', 'US8', 'US9', 'US9.5', 'US10', 'US11', 'US12', 'US13', 'US14', 'US15'];
     private static $SIZE_UK = ['UK2', 'UK3', 'UK4', 'UK5', 'UK6', 'UK7', 'UK8', 'UK9', 'UK10', 'UK11', 'UK12', 'UK13'];
     private static $SIZE_DE = ['EU35', 'EU36', 'EU37', 'EU38', 'EU39', 'EU40', 'EU41', 'EU42', 'EU43', 'EU44', 'EU45', 'EU46'];
+    private static $AMUS = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA'];
+    private static $AMUK = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
+    private static $AMDE = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA'];
 
     function stats($f3)
     {
@@ -73,15 +76,15 @@ class SKU extends Base
 
         switch ($market) {
             case 'AMUS':
-                $stores = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA'];
+                $stores = self::$AMUS;
                 $allSize = self::$SIZE_US;
                 break;
             case 'AMUK':
-                $stores = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
+                $stores = self::$AMUK;
                 $allSize = self::$SIZE_UK;
                 break;
             case 'AMDE':
-                $stores = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA'];
+                $stores = self::$AMDE;
                 $allSize = self::$SIZE_DE;
                 break;
             case 'ALI':
@@ -155,7 +158,7 @@ class SKU extends Base
             }
             $sizeStats['cn'] = $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['us'] = $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
-            $sizeStats['de'] = $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
+            $sizeStats['de'] = $stock->count(["prototype_id =? AND location LIKE '德国%' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
             $sizeStats['uk'] = $stock->count(["prototype_id =? AND location = '英国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]);
         }
         $unsoldSize = array_diff($allSize, $soldSize);
@@ -163,10 +166,10 @@ class SKU extends Base
             $data[$size] = [
                 'cn' => $stock->count(["prototype_id =? AND location = '中国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
                 'us' => $stock->count(["prototype_id =? AND location = '美国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
-                'de' => $stock->count(["prototype_id =? AND location = '德国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
+                'de' => $stock->count(["prototype_id =? AND location LIKE '德国%' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
+                'uk' => $stock->count(["prototype_id =? AND location = '英国' AND (size = ? OR size like ? OR size like ?)", $prototype['ID'], $size, $size . '=%', '%=' . $size]),
             ];
         }
-        trace($db->log());
         uksort($data, function ($a, $b) {
             $c1 = substr($a, 0, 2);
             $c2 = substr($b, 0, 2);
@@ -186,5 +189,67 @@ class SKU extends Base
             'head' => array_merge($params, ['stores' => $stores]),
             'body' => $data
         ];
+    }
+
+    function download($f3)
+    {
+        $startDate = date('Y-m-d', strtotime("last Saturday"));
+        $endDate = date('Y-m-d', strtotime("Friday"));
+        $dir = $f3->TEMP . 'downloads/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0700, true);
+        }
+        $file = $dir . "sku-stats-$startDate-$endDate.csv";
+        if (!is_file($file) || filemtime($file) < strtotime($endDate . " 23:59:59")) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+            $time = time();
+            $stores = array_merge(self::$AMUS, self::$AMUK, self::$AMDE);
+            $channels = implode("','", $stores);
+            $db = SqlMapper::getDbEngine();
+            $sql = "SELECT distinct(p.model) FROM order_item o, prototype p WHERE o.create_time>'$startDate' AND o.create_time<'$endDate' AND channel IN ('$channels') AND o.prototype_id=p.ID ORDER BY 1";
+            $sku = $db->exec($sql);
+            trace("sku stats download: $startDate - $endDate with " . count($sku) . " sku");
+            $tmpFile = "$file-$time";
+            $csv = fopen($tmpFile, "a");
+            fputcsv($csv, array_merge(["sku"], $stores, ["CN","US","DE","UK"]));
+            try {
+                $prototype = new SqlMapper('prototype');
+                $stock = new Mapper($db, 'stock');
+                foreach ($sku as $item) {
+                    $prototype->reset();
+                    $prototype->loadOne(['model=?', $item['model']]);
+                    $pid = $prototype['ID'];
+                    $sql = "SELECT channel, count(*) as count FROM order_item WHERE prototype_id=$pid AND create_time>'$startDate' AND create_time<'$endDate' AND channel IN ('$channels') GROUP by channel";
+                    $query = $db->exec($sql);
+                    $channelStat = array_flip($stores);
+                    foreach ($channelStat as $channel => $value) {
+                        $channelStat[$channel] = 0;
+                    }
+                    foreach ($query as $channelCount) {
+                        $channelStat[$channelCount['channel']] = $channelCount['count'];
+                    }
+                    $stock->reset();
+                    $stockStat = [
+                        'cn' => $stock->count(["prototype_id=? AND location='中国'", $prototype['ID']]),
+                        'us' => $stock->count(["prototype_id=? AND location='美国'", $prototype['ID']]),
+                        'de' => $stock->count(["prototype_id=? AND location LIKE '德国%'", $prototype['ID']]),
+                        'uk' => $stock->count(["prototype_id=? AND location='英国'", $prototype['ID']]),
+                    ];
+                    fputcsv($csv, array_merge([$item['model']], $channelStat, $stockStat));
+                    unset($query);
+                    unset($channelStat);
+                    unset($stockStat);
+                }
+            } catch (\Exception $e) {
+                var_dump($e);
+            }
+            fclose($csv);
+            rename($tmpFile, $file);
+            trace("sku status download execution time: " . (time() - $time) . "s");
+        }
+        header('Cache-Control: no-cache');
+        \Web::instance()->send($file);
     }
 }
