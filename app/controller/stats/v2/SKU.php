@@ -13,7 +13,7 @@ class SKU extends Base
     private static $SIZE_DE = ['EU35', 'EU36', 'EU37', 'EU38', 'EU39', 'EU40', 'EU41', 'EU42', 'EU43', 'EU44', 'EU45', 'EU46'];
     private static $AMUS = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA'];
     private static $AMUK = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
-    private static $AMDE = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA'];
+    private static $AMDE = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA', 'AYDE', 'AYDE-FBA'];
 
     function stats($f3)
     {
