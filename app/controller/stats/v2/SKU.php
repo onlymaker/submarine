@@ -208,7 +208,7 @@ class SKU extends Base
             $stores = array_merge(self::$AMUS, self::$AMUK, self::$AMDE);
             $channels = implode("','", $stores);
             $db = SqlMapper::getDbEngine();
-            $sql = "SELECT distinct(p.model) FROM order_item o, prototype p WHERE o.create_time>'$startDate' AND o.create_time<'$endDate' AND channel IN ('$channels') AND o.prototype_id=p.ID ORDER BY 1";
+            $sql = "SELECT distinct(p.model) FROM order_item o, prototype p WHERE o.create_time>'$startDate' AND o.create_time<'$endDate 23:59:59' AND channel IN ('$channels') AND o.prototype_id=p.ID ORDER BY 1";
             $sku = $db->exec($sql);
             trace("sku stats download: $startDate - $endDate with " . count($sku) . " sku");
             $tmpFile = "$file-$time";
@@ -221,7 +221,7 @@ class SKU extends Base
                     $prototype->reset();
                     $prototype->loadOne(['model=?', $item['model']]);
                     $pid = $prototype['ID'];
-                    $sql = "SELECT channel, count(*) as count FROM order_item WHERE prototype_id=$pid AND create_time>'$startDate' AND create_time<'$endDate' AND channel IN ('$channels') GROUP by channel";
+                    $sql = "SELECT channel, count(*) as count FROM order_item WHERE prototype_id=$pid AND create_time>'$startDate' AND create_time<'$endDate 23:59:59' AND channel IN ('$channels') GROUP by channel";
                     $query = $db->exec($sql);
                     $channelStat = array_flip($stores);
                     foreach ($channelStat as $channel => $value) {
