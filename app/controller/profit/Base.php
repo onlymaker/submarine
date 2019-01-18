@@ -20,17 +20,12 @@ class Base extends \controller\Base {
 
     function get() {
         global $f3;
-        $f3->reroute($this->url().'Index');
+        header("location:{$f3->BASE}/profit/Index");
     }
     
     function login() {
         global $f3;
         if(isset($_COOKIE['USERNAME']) && $_COOKIE['USERNAME']) return $_COOKIE['USERNAME'];
-        $f3->reroute($this->url().'Login');
-    }
-
-    function url() {
-        global $f3;
-        return $f3->get('SCHEME').'://'.$f3->get('HOST').':'.$f3->get('PORT').$f3->get('BASE').'/profit/';
+        header("location:{$f3->BASE}/profit/Index");
     }
 } 

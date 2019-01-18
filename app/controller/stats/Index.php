@@ -11,6 +11,6 @@ namespace controller\stats;
 class Index extends Base {
     function get() {
         global $f3;
-        $f3->reroute($this->url().'Week');
+        header("location:{$f3->BASE}/stats/Week");
     }
 } 

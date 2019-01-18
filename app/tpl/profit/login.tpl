@@ -3,7 +3,7 @@
 <head>
 <meta charset='utf-8'>
 <title>{{$title}}</title>
-<link href='http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet'>
+<link href='//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet'>
 <link href='{{$site_base}}/favicon.ico' type=image/x-icon rel='shortcut icon'>
 <style>
 body {background-color: #242424}
@@ -35,9 +35,9 @@ body {background-color: #242424}
     </div>
 </div>
 </body>
-<script src='http://cdn.bootcss.com/jquery/1.12.1/jquery.min.js'></script>
-<script src='http://cdn.bootcss.com/blueimp-md5/2.3.0/js/md5.min.js'></script>
-<script src='http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+<script src='//cdn.bootcss.com/jquery/1.12.1/jquery.min.js'></script>
+<script src='//cdn.bootcss.com/blueimp-md5/2.3.0/js/md5.min.js'></script>
+<script src='//cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <script>
     $(function() {
     })

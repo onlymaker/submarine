@@ -4,7 +4,6 @@ namespace controller\api;
 
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
-use utils\ImageHandler;
 
 class Image extends Base
 {
