@@ -1,4 +1,4 @@
-FROM syncxplus/php:7.3.1-apache-stretch
+FROM syncxplus/php:7.3.3-apache-stretch
 
 LABEL maintainer=jibo@outlook.com
 
