@@ -5,9 +5,8 @@ namespace controller\api;
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
 
-class Image extends Base
+class Image
 {
-
     function beforeRoute()
     {
         header('Access-Control-Allow-Origin:*');

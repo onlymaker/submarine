@@ -1,18 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jibo
- * Date: 16/3/12
- * Time: 10:32
- */
 
 namespace controller\api;
 
 use utils\RabbitHandler;
 
-class Rabbit extends Base {
-
-    function get() {
+class Rabbit
+{
+    function get()
+    {
         global $f3;
         $rabbit = new RabbitHandler(
             $f3->get('RABBIT_HOST'),
