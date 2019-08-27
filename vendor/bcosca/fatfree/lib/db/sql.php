@@ -49,7 +49,9 @@ class SQL {
 		//! Number of rows affected by query
 		$rows=0,
 		//! SQL log
-		$log;
+		$log,
+		//! SQL logger
+		$logger;
 
 	/**
 	*	Begin SQL transaction
@@ -220,7 +222,7 @@ class SQL {
 						'/';
 				}
 				if ($log)
-					$this->log.=($stamp?(date('r').' '):'').' (-0ms) '.
+					$this->log.=($stamp?(date('r').' '):'').'(-0ms) '.
 						preg_replace($keys,$vals,
 							str_replace('?',chr(0).'?',$cmd),1).PHP_EOL;
 				$query->execute();
@@ -235,7 +237,7 @@ class SQL {
 					user_error('PDOStatement: '.$error[2],E_USER_ERROR);
 				}
 				if (preg_match('/(?:^[\s\(]*'.
-					'(?:EXPLAIN|SELECT|PRAGMA|SHOW)|RETURNING)\b/is',$cmd) ||
+					'(?:WITH|EXPLAIN|SELECT|PRAGMA|SHOW)|RETURNING)\b/is',$cmd) ||
 					(preg_match('/^\s*(?:CALL|EXEC)\b/is',$cmd) &&
 						$query->columnCount())) {
 					$result=$query->fetchall(\PDO::FETCH_ASSOC);
@@ -268,7 +270,8 @@ class SQL {
 		if ($this->trans && $auto)
 			$this->commit();
 		if ($fw->DEBUG) {
-			\Log::instance(date('Y-m-d.\s\q\l'))->write($this->log);
+			if (!isset($this->logger)) $this->logger = new \Log(date('Y-m-d.\s\q\l.\l\o\g'));
+			$this->logger->write($this->log);
 			$this->log='';
 		}
 		return $result;

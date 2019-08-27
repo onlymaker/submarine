@@ -21,7 +21,7 @@
 */
 
 //! Custom logger
-class Log extends Prefab {
+class Log {
 
 	protected
 		//! File name
@@ -33,15 +33,16 @@ class Log extends Prefab {
 	*	@param $text string
 	*	@param $format string
 	**/
-	function write($text,$format='[Y-m-d H:i:s]') {
+	function write($text,$format='c') {
 		$fw=Base::instance();
-		$fw->write(
-			$this->file,
-			date($format).
-				' ['.$fw->ip().'] '.
-			trim($text).PHP_EOL,
-			TRUE
-		);
+		foreach (preg_split('/\r?\n|\r/',trim($text)) as $line)
+			$fw->write(
+				$this->file,
+				date($format).
+					(' ['.$fw->ip().'] ').
+				trim($line).PHP_EOL,
+				TRUE
+			);
 	}
 
 	/**

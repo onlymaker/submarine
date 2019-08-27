@@ -1,9 +1,10 @@
 <?php
 namespace PhpAmqpLib\Wire;
 
+use PhpAmqpLib\Exception\AMQPDataReadException;
 use PhpAmqpLib\Exception\AMQPInvalidArgumentException;
+use PhpAmqpLib\Exception\AMQPNoDataException;
 use PhpAmqpLib\Exception\AMQPOutOfBoundsException;
-use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Exception\AMQPIOWaitException;
 use PhpAmqpLib\Helper\MiscHelper;
@@ -41,7 +42,7 @@ class AMQPReader extends AbstractClient
     /** @var bool */
     protected $is64bits;
 
-    /** @var int */
+    /** @var int|float|null */
     protected $timeout;
 
     /** @var int */
@@ -59,7 +60,7 @@ class AMQPReader extends AbstractClient
     {
         parent::__construct();
 
-        $this->str = $str;
+        $this->str = is_string($str) ? $str : '';
         $this->str_length = mb_strlen($this->str, 'ASCII');
         $this->io = $io;
         $this->offset = 0;
@@ -111,28 +112,40 @@ class AMQPReader extends AbstractClient
      *
      * AMQPTimeoutException can be raised if the timeout is set
      *
-     * @throws \PhpAmqpLib\Exception\AMQPIOWaitException
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws \PhpAmqpLib\Exception\AMQPIOWaitException on network errors
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException when timeout is set and no data received
+     * @throws \PhpAmqpLib\Exception\AMQPNoDataException when no data is ready to read from IO
      */
     protected function wait()
     {
-        if ($this->getTimeout() == 0) {
-            return null;
+        $timeout = $this->getTimeout();
+        if (null === $timeout) {
+            // timeout=null just poll state and return instantly
+            $sec = 0;
+            $usec = 0;
+        } elseif ($timeout > 0) {
+            list($sec, $usec) = MiscHelper::splitSecondsMicroseconds($this->getTimeout());
+        } else {
+            // wait indefinitely for data if timeout=0
+            $sec = null;
+            $usec = 0;
         }
 
-        // wait ..
-        list($sec, $usec) = MiscHelper::splitSecondsMicroseconds($this->getTimeout());
         $result = $this->io->select($sec, $usec);
 
         if ($result === false) {
-            throw new AMQPIOWaitException('A network error occured while awaiting for incoming data');
+            throw new AMQPIOWaitException('A network error occurred while awaiting for incoming data');
         }
 
         if ($result === 0) {
-            throw new AMQPTimeoutException(sprintf(
-                'The connection timed out after %s sec while awaiting incoming data',
-                $this->getTimeout()
-            ));
+            if ($timeout > 0) {
+                throw new AMQPTimeoutException(sprintf(
+                    'The connection timed out after %s sec while awaiting incoming data',
+                    $timeout
+                ));
+            } else {
+                throw new AMQPNoDataException('No data is ready to read');
+            }
         }
     }
 
@@ -140,20 +153,29 @@ class AMQPReader extends AbstractClient
      * @param int $n
      * @return string
      * @throws \RuntimeException
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPDataReadException
+     * @throws \PhpAmqpLib\Exception\AMQPNoDataException
      */
     protected function rawread($n)
     {
         if ($this->io) {
-            $this->wait();
-            $res = $this->io->read($n);
+            while (true) {
+                $this->wait();
+                try {
+                    $res = $this->io->read($n);
+                    break;
+                } catch (AMQPTimeoutException $e) {
+                    if ($this->getTimeout() > 0) {
+                        throw $e;
+                    }
+                }
+            }
             $this->offset += $n;
-
             return $res;
         }
 
         if ($this->str_length < $n) {
-            throw new AMQPRuntimeException(sprintf(
+            throw new AMQPDataReadException(sprintf(
                 'Error reading data. Requested %s bytes while string buffer has only %s',
                 $n,
                 $this->str_length
@@ -173,7 +195,7 @@ class AMQPReader extends AbstractClient
      */
     public function read_bit()
     {
-        if (!$this->bitcount) {
+        if (empty($this->bitcount)) {
             $this->bits = ord($this->rawread(1));
             $this->bitcount = 8;
         }
@@ -262,7 +284,7 @@ class AMQPReader extends AbstractClient
         $this->bitcount = $this->bits = 0;
         list(, $res) = unpack('N', $this->rawread(4));
 
-        return !$this->is64bits && self::getLongMSB($res) ? sprintf('%u', $res) : $res;
+        return empty($this->is64bits) && self::getLongMSB($res) ? sprintf('%u', $res) : $res;
     }
 
     /**
@@ -290,7 +312,7 @@ class AMQPReader extends AbstractClient
         list(, $hi, $lo) = unpack('N2', $this->rawread(8));
         $msb = self::getLongMSB($hi);
 
-        if (!$this->is64bits) {
+        if (empty($this->is64bits)) {
             if ($msb) {
                 $hi = sprintf('%u', $hi);
             }
@@ -442,7 +464,7 @@ class AMQPReader extends AbstractClient
      * @param int $fieldType One of AMQPAbstractCollection::T_* constants
      * @param bool $collectionsAsObjects Description
      * @return mixed
-     * @throws \PhpAmqpLib\Exception\AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPDataReadException
      */
     public function read_value($fieldType, $collectionsAsObjects = false)
     {
@@ -501,6 +523,9 @@ class AMQPReader extends AbstractClient
             case AMQPAbstractCollection::T_VOID:
                 $val = null;
                 break;
+            case AMQPAbstractCollection::T_BYTES:
+                $val = $this->read_longstr();
+                break;
             default:
                 throw new AMQPInvalidArgumentException(sprintf(
                     'Unsupported type "%s"',
@@ -522,7 +547,7 @@ class AMQPReader extends AbstractClient
     /**
      * Sets the timeout (second)
      *
-     * @param int $timeout
+     * @param int|float|null $timeout
      */
     public function setTimeout($timeout)
     {
@@ -530,7 +555,7 @@ class AMQPReader extends AbstractClient
     }
 
     /**
-     * @return int
+     * @return int|float
      */
     public function getTimeout()
     {

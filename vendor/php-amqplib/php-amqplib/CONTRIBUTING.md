@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/videlalvaro/php-amqplib).
+We accept contributions via Pull Requests on [Github](https://github.com/php-amqplib/php-amqplib).
 
 
 ## Pull Requests
@@ -24,8 +24,14 @@ We accept contributions via Pull Requests on [Github](https://github.com/videlal
 
 ## Running Tests
 
+To successfully run the tests you need to first have a stock RabbitMQ broker running locally. Then, run tests like this:
+
 ``` bash
-$ phpunit
+$ vendor/bin/phpunit
+```
+or
+``` bash
+$ make test
 ```
 
 

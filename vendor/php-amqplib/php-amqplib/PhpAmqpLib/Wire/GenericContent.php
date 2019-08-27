@@ -9,7 +9,7 @@ use PhpAmqpLib\Channel\AMQPChannel;
  */
 abstract class GenericContent
 {
-    /** @var AMQPChannel[] */
+    /** @var array */
     public $delivery_info = array();
 
     /** @var array Final property definitions */
@@ -34,11 +34,7 @@ abstract class GenericContent
      */
     public function __construct($properties, $propertyTypes = null)
     {
-        $this->prop_types = self::$propertyDefinitions;
-
-        if (!empty($propertyTypes)) {
-            $this->prop_types = $propertyTypes;
-        }
+        $this->prop_types = !empty($propertyTypes) ? $propertyTypes : self::$propertyDefinitions;
 
         if (!empty($properties)) {
             $this->properties = array_intersect_key($properties, $this->prop_types);
@@ -105,6 +101,10 @@ abstract class GenericContent
                 'No "%s" property',
                 $name
             ));
+        }
+        
+        if (isset($this->properties[$name]) && $this->properties[$name] !== $value || !isset($this->properties[$name])) {
+            $this->serialized_properties = null;
         }
 
         $this->properties[$name] = $value;
