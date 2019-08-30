@@ -11,9 +11,9 @@ class SKU extends Base
     private static $SIZE_US = ['US5', 'US6', 'US7', 'US8', 'US9', 'US9.5', 'US10', 'US11', 'US12', 'US13', 'US14', 'US15'];
     private static $SIZE_UK = ['UK2', 'UK3', 'UK4', 'UK5', 'UK6', 'UK7', 'UK8', 'UK9', 'UK10', 'UK11', 'UK12', 'UK13'];
     private static $SIZE_DE = ['EU35', 'EU36', 'EU37', 'EU38', 'EU39', 'EU40', 'EU41', 'EU42', 'EU43', 'EU44', 'EU45', 'EU46'];
-    private static $AMUS = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA'];
-    private static $AMUK = ['AOUK', 'ASUK', 'AKUK', 'AKUK-FBA'];
-    private static $AMDE = ['AODE', 'AODE-FBA', 'AKDE', 'AKDE-FBA', 'ASDE', 'ASDE-FBA', 'ARDE', 'ARDE-FBA', 'AYDE', 'AYDE-FBA'];
+    private static $AMUS = ['AHUS', 'AHUS-FBA', 'ACUS', 'ACUS-FBA', 'ASUS', 'ASUS-FBA', 'ARUS', 'ARUS-FBA', 'AEUS', 'AEUS-FBA'];
+    private static $AMUK = ['AKUK', 'AKUK-FBA'];
+    private static $AMDE = ['AKDE', 'AKDE-FBA', 'ARDE', 'ARDE-FBA'];
 
     function stats($f3)
     {
