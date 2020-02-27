@@ -200,9 +200,9 @@ class Helper {
         foreach($tags as $tag) {
             $db = SqlMapper::getDbEngine();
             $sql = <<<SQL
-SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
-WHERE {$time} AND o.prototype_id in 
-(SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
+SELECT count(*) as quantity, sum(price) as sales
+FROM order_item o, prototype p
+WHERE {$time} AND o.prototype_id=p.id and p.tag='$tag'
 SQL;
             trace("tag stats: " . $sql);
             list($result) = $db->exec($sql);
@@ -212,9 +212,9 @@ SQL;
                 "amount" => $result["price"]
             );
             $sql = <<<SQL
-SELECT count(*) as quantity, sum(price) as sales FROM order_item o 
-WHERE {$prevTime} AND o.prototype_id in 
-(SELECT prototype_id FROM product_tag pt, tag t WHERE pt.tag_id=t.ID AND t.name IN ({$tag}));
+SELECT count(*) as quantity, sum(price) as sales
+FROM order_item o, prototype p
+WHERE {$prevTime} AND o.prototype_id=p.id and p.tag='$tag'
 SQL;
             trace("prev tag stats: " . $sql);
             list($result) = $db->exec($sql);
