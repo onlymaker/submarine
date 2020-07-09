@@ -35,7 +35,7 @@ body {background-color: #242424}
     </div>
 </div>
 </body>
-<script src='//code.jquery.com/jquery-1.12.4.min.js'></script>
+<script src='//cdn.bootcss.com/jquery/1.12.4/jquery.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'></script>
 <script src='//stackpath.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 <script>
