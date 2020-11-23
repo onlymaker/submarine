@@ -14,6 +14,7 @@ class SKU extends Base
     private static $AMUS = ['ADUS', 'ADUS-FBA', 'AEUS', 'AEUS-FBA', 'AIUS', 'AIUS-FBA', 'ALUS', 'ALUS-FBA', 'ASUS', 'ASUS-FBA', 'SHUS', 'SHUS-FBA'];
     private static $AMUK = ['AKUK', 'AKUK-FBA', 'REUK', 'REUK-FBA'];
     private static $AMDE = ['AEDE', 'AEDE-FBA', 'AKDE', 'AKDE-FBA', 'ARDE', 'ARDE-FBA'];
+    private static $Zalando = ['Zalando', 'Zalando-FBA'];
 
     function stats($f3)
     {
@@ -85,6 +86,10 @@ class SKU extends Base
                 break;
             case 'AMDE':
                 $stores = self::$AMDE;
+                $allSize = self::$SIZE_DE;
+                break;
+            case 'Zalando':
+                $stores = self::$Zalando;
                 $allSize = self::$SIZE_DE;
                 break;
             case 'ALI':
@@ -205,7 +210,7 @@ class SKU extends Base
                 unlink($file);
             }
             $time = time();
-            $stores = array_merge(self::$AMUS, self::$AMUK, self::$AMDE);
+            $stores = array_merge(self::$AMUS, self::$AMUK, self::$AMDE, self::$Zalando);
             $channels = implode("','", $stores);
             $db = SqlMapper::getDbEngine();
             $sql = "SELECT distinct(p.model) FROM order_item o, prototype p WHERE o.create_time>'$startDate' AND o.create_time<'$endDate 23:59:59' AND channel IN ('$channels') AND o.prototype_id=p.ID ORDER BY 1";

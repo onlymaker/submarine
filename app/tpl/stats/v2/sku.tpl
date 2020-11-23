@@ -21,6 +21,7 @@
                 <option value="amus">AMUS</option>
                 <option value="amuk">AMUK</option>
                 <option value="amde">AMDE</option>
+                <option value="zalando">Zalando</option>
                 <option value="ali">ALI</option>
                 <option value="all">ALL</option>
             </select>
