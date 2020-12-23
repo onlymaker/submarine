@@ -199,7 +199,7 @@ class Helper
         foreach ($tags as $tag) {
             $db = SqlMapper::getDbEngine();
             $sql = <<<SQL
-SELECT count(*) as quantity, sum(price) as sales
+SELECT count(*) as quantity, sum(o.price) as sales
 FROM order_item o, prototype p
 WHERE {$time} AND o.prototype_id=p.id and p.tag='$tag'
 SQL;
@@ -211,7 +211,7 @@ SQL;
                 "amount" => $result["price"]
             );
             $sql = <<<SQL
-SELECT count(*) as quantity, sum(price) as sales
+SELECT count(*) as quantity, sum(o.price) as sales
 FROM order_item o, prototype p
 WHERE {$prevTime} AND o.prototype_id=p.id and p.tag='$tag'
 SQL;
