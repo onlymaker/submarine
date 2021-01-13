@@ -4,7 +4,7 @@
     <title>Navi</title>
     <link rel="icon" href="//qiniu.syncxplus.com/logo/testbird.png?imageView2/0/w/100"/>
     <script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <link href="//stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="//cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <style>
         .container {
             margin-top: 25px;
