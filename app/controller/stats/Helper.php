@@ -16,7 +16,7 @@ class Helper
     function statsByTime($y, $i, $t, $target = 'week')
     {
         $pdo = new \db\Base();
-        $tables = array(
+        /*$tables = array(
             'order_item' => 'o',
             'prototype' => 'p',
         );
@@ -25,18 +25,18 @@ class Helper
             $manufactory = 'p.manufactory NOT IN (\'拖鞋\',\'小商品\',\'服装\',\'包\')';
         } else {
             $manufactory = 'p.manufactory IN (\'小商品\',\'服装\',\'包\')';
-        }
+        }*/
 
         $year = $y;
 
         if ($target == 'quarter') {
             list($prev) = $pdo->_fetchArray(
-                $tables,
-                'sum(o.price) as amount, count(*) as quantity',
-                [['o.prototype_id=p.id and ' . $manufactory . ' and year(o.create_time)=? and quarter(o.create_time)=4', ($year - 1)]],
+                ['order_item' => 'o'],
+                'sum(price) as amount, count(*) as quantity',
+                [['year(create_time)=? and quarter(create_time)=4', ($year - 1)]],
                 null, 0, 0, 0
             );
-            $statsFields = 'sum(o.price) as amount, count(*) as quantity, quarter(o.create_time) as i';
+            $statsFields = 'sum(price) as amount, count(*) as quantity, quarter(o.create_time) as i';
             $time = 'year(o.create_time)=' . $year . ' and quarter(o.create_time)=' . $i;
             if ($i == 1) {
                 $prevTime = 'year(o.create_time)=' . ($year - 1) . ' and quarter(o.create_time)=4';
@@ -49,12 +49,12 @@ class Helper
             );
         } else if ($target == 'month') {
             list($prev) = $pdo->_fetchArray(
-                $tables,
-                'sum(o.price) as amount, count(*) as quantity',
-                [['o.prototype_id=p.id and ' . $manufactory . ' and year(o.create_time)=? and month(o.create_time)=12', ($year - 1)]],
+                ['order_item' => 'o'],
+                'sum(price) as amount, count(*) as quantity',
+                [['year(create_time)=? and month(create_time)=12', ($year - 1)]],
                 null, 0, 0, 0
             );
-            $statsFields = 'sum(o.price) as amount, count(*) as quantity, month(o.create_time) as i';
+            $statsFields = 'sum(price) as amount, count(*) as quantity, month(o.create_time) as i';
             $time = 'year(o.create_time)=' . $year . ' and month(o.create_time)=' . $i;
             if ($i == 1) {
                 $prevTime = 'year(o.create_time)=' . ($year - 1) . ' and month(o.create_time)=12';
@@ -67,12 +67,12 @@ class Helper
             );
         } else {
             list($prev) = $pdo->_fetchArray(
-                $tables,
-                'sum(o.price) as amount, count(*) as quantity',
-                [['o.prototype_id=p.id and ' . $manufactory . ' and year(o.create_time)=? and weekofyear(o.create_time)=?', ($year - 1), date('W', strtotime(($year - 1) . '-12-31'))]],
+                ['order_item' => 'o'],
+                'sum(price) as amount, count(*) as quantity',
+                [['year(create_time)=? and weekofyear(create_time)=?', ($year - 1), date('W', strtotime(($year - 1) . '-12-31'))]],
                 null, 0, 0, 0
             );
-            $statsFields = 'sum(o.price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
+            $statsFields = 'sum(price) as amount, count(*) as quantity, weekofyear(o.create_time) as i';
             $time = 'year(o.create_time)=' . $year . ' and weekofyear(o.create_time)=' . $i;
             if ($i == 1) {
                 $prevTime = 'year(o.create_time)=' . ($year - 1) . ' and weekofyear(o.create_time)=' . date('W', strtotime(($year - 1) . '-12-31'));
@@ -89,9 +89,9 @@ class Helper
         }
 
         $stats = $pdo->_fetchArray(
-            $tables,
+            ['order_item' => 'o'],
             $statsFields,
-            [['o.prototype_id=p.id and ' . $manufactory . ' and year(o.create_time)=?', $year]],
+            [['year(create_time)=?', $year]],
             array('group' => 'i', 'order' => 'i'),
             0, 0, 0
         );
@@ -116,17 +116,17 @@ class Helper
         }
 
         $channelStats = $pdo->_fetchArray(
-            $tables,
-            'o.channel, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $time]],
-            array('group' => 'o.channel', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'channel, sum(price) as amount, count(*) as quantity',
+            [[$time]],
+            array('group' => 'channel', 'order' => 'quantity desc'),
             0, 0, 0
         );
         $prevChannelStats = $pdo->_fetchArray(
-            $tables,
-            'o.channel, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $prevTime]],
-            array('group' => 'o.channel', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'channel, sum(price) as amount, count(*) as quantity',
+            [[$prevTime]],
+            array('group' => 'channel', 'order' => 'quantity desc'),
             0, 0, 0
         );
         foreach ($channelStats as &$item) {
@@ -142,17 +142,17 @@ class Helper
         }
 
         $sizeStats = $pdo->_fetchArray(
-            $tables,
-            'o.size, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $time]],
-            array('group' => 'o.size', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'size, sum(price) as amount, count(*) as quantity',
+            [[$time]],
+            array('group' => 'size', 'order' => 'quantity desc'),
             0, 0, 0
         );
         $prevSizeStats = $pdo->_fetchArray(
-            $tables,
-            'o.size, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $prevTime]],
-            array('group' => 'o.size', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'size, sum(price) as amount, count(*) as quantity',
+            [[$prevTime]],
+            array('group' => 'size', 'order' => 'quantity desc'),
             0, 0, 0
         );
         foreach ($sizeStats as &$item) {
@@ -168,17 +168,17 @@ class Helper
         }
 
         $modelStats = $pdo->_fetchArray(
-            $tables,
-            'p.model, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $time]],
-            array('group' => 'p.model', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'sku as model, sum(price) as amount, count(*) as quantity',
+            [[$time]],
+            array('group' => 'sku', 'order' => 'quantity desc'),
             0, 0, 0
         );
         $prevModelStats = $pdo->_fetchArray(
-            $tables,
-            'p.model, sum(o.price) as amount, count(*) as quantity',
-            [['o.prototype_id=p.id and ' . $manufactory . ' and ' . $prevTime]],
-            array('group' => 'p.model', 'order' => 'quantity desc'),
+            ['order_item' => 'o'],
+            'sku as model, sum(price) as amount, count(*) as quantity',
+            [[$prevTime]],
+            array('group' => 'sku', 'order' => 'quantity desc'),
             0, 0, 0
         );
         foreach ($modelStats as &$item) {
