@@ -13,7 +13,7 @@
         "php-amqplib/php-amqplib": "^2.8",
         "phpoffice/PhpSpreadsheet": "^1.5",
         "qiniu/php-sdk": "7.1.3",
-        "smarty/smarty": "3.1.32",
+        "smarty/smarty": "3.1.39",
         "syncxplus/php-validation": "*"
     },
     "repositories": {
