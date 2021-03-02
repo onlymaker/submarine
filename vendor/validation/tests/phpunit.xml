@@ -1,5 +1,0 @@
-<phpunit colors="true">
-    <testsuite name="Ruckus Website">
-        <directory>./</directory>
-    </testsuite>
-</phpunit>
