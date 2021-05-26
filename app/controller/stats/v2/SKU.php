@@ -88,7 +88,7 @@ class SKU extends Base
                 $stores = self::$AMDE;
                 $allSize = self::$SIZE_DE;
                 break;
-            case 'Zalando':
+            case 'ZALANDO':
                 $stores = self::$Zalando;
                 $allSize = self::$SIZE_DE;
                 break;
